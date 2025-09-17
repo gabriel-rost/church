@@ -1,0 +1,8 @@
+.idea
+.config
+/church_project/.venv
+/church_project/images
+church_project/church_app/__pycache__
+church_project/church_site/__pycache__
+church_project/church_app/migrations/__pycache__
+church_project/church_app/migrations
