@@ -9,7 +9,6 @@ class Image(models.Model):
     def __str__(self):
         return f"{self.date} - {self.ref}"
 
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_icon = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=True)
@@ -17,7 +16,6 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
-
 
 class Content(models.Model):
     title = models.CharField(max_length=256)
@@ -27,7 +25,6 @@ class Content(models.Model):
     def __str__(self):
         return self.title
 
-
 class Channel(models.Model):
     name = models.CharField(max_length=50)
     creation_date = models.DateField(auto_now_add=True)
@@ -35,7 +32,6 @@ class Channel(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -49,17 +45,6 @@ class Post(models.Model):
     def __str__(self):
         return f"Post de {self.user} em {self.channel} ({self.date})"
 
-'''
-class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="comments")
-    date = models.DateTimeField(auto_now_add=True)
-    text = models.CharField(max_length=500)
-    replies = models.ManyToManyField("self", blank=True, symmetrical=False)
-
-    def __str__(self):
-        return f"Comentário de {self.user} em {self.post}"
-''' 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="comments")
