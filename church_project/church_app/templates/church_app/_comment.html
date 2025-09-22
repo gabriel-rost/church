@@ -1,0 +1,13 @@
+<li>
+    <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+    <br>
+    <small>{{ comment.date|date:"d/m/Y H:i" }}</small>
+
+    {% if comment.replies.all %}
+        <ul>
+            {% for reply in comment.replies.all %}
+                {% include "church_app/_comment.html" with comment=reply %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</li>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>{{ post.content.title }}</h1>
+
+  <p>{{ post.content.text }}</p>
+  <p>{{ post.content.images }}</p>
+  <p>
+    <small>Publicado por {{ post.user.username }} em {{ post.date|date:"d/m/Y H:i" }}</small>
+  </p>
+
+  <hr>
+
+  <h2>Comentários</h2>
+
+  <ul>
+      {% for comment in comments %}
+          {% include "church_app/_comment.html" with comment=comment %}
+      {% empty %}
+          <li>Sem comentários ainda.</li>
+      {% endfor %}
+  </ul>
+
+{% endblock %}
