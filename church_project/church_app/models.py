@@ -2,25 +2,53 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Image(models.Model):
-    date = models.DateTimeField(auto_now_add=True)
-    ref = models.ImageField(upload_to="images/")
+
+class Archive(models.Model):
+    # O FileField gerencia o upload e o caminho do arquivo.
+    # O nome original, tamanho e tipo podem ser acessados a partir deste campo.
+    file = models.FileField(upload_to="archives/")
+    
+    # Campo para registrar quando o upload foi feito.
+    # auto_now_add=True garante que a data seja salva na criação.
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.date} - {self.ref}"
+        # Retorna o caminho base do arquivo, que é mais útil.
+        # ex: "archives/meu_documento.pdf"
+        return self.file.name
+
+    @property
+    def filename(self):
+        # Propriedade para obter apenas o nome do arquivo, sem o caminho.
+        import os
+        return os.path.basename(self.file.name)
+
+    @property
+    def size(self):
+        # Propriedade para acessar o tamanho do arquivo diretamente.
+        return self.file.size
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_icon = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=True)
-    born_date = models.DateField(null=True, blank=True)
+    # Usando um nome de campo mais convencional e adicionando related_name
+    avatar = models.ForeignKey(
+        Archive,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='profile_avatars'
+    )
+    # Usando o nome de campo mais comum
+    birth_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return self.user.username
+        # Retorno mais descritivo
+        return f"Perfil de {self.user.username}"
 
 class Content(models.Model):
     title = models.CharField(max_length=256)
-    text = models.CharField(max_length=500)
-    images = models.ManyToManyField(Image, blank=True)
+    text = models.TextField(blank=True)
+    attachments = models.ManyToManyField(Archive, blank=True, related_name='contents')
 
     def __str__(self):
         return self.title

@@ -1,7 +1,9 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
 from django.template import loader
 from .models import Post
+
+from django.contrib.auth.forms import AuthenticationForm
 # Create your views here.
 
 def index(request):
@@ -16,3 +18,9 @@ def post(request, post_id):
         "post": post,
         "comments": comments
     })
+
+def login_view(request):
+    form = AuthenticationForm(request, data=request.POST or None)
+    if form.is_valid():
+        return HttpResponse("Login successful")
+    return render(request, "login.html", {"form": form})

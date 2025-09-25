@@ -1,20 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Posts</h1>
+<div class="container my-4">
 
-  <ul>
-    {% for post in posts %}
-      <li>
-        <a href="{% url 'post_detail' post.id %}">
-          {{ post.content.title }}
-        </a>
-        <br>
-        <small>
+  <h1 class="mb-4">Posts Recentes</h1>
+
+  {% include "church_app/post_box.html" %}
+
+  {% for post in posts %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title"> {{ post.content.title }} </h5>
+      <p class="card-text">{{ post.content.text }}</p>
+      <p class="card-text">
+        <small class="text-body-secondary">
           Publicado por {{ post.user.username }} em {{ post.date|date:"d/m/Y H:i" }}
         </small>
-      </li>
-    {% empty %}
-      <li>Nenhum post disponível.</li>
+      </p>
+    </div>
+    {% for image in post.content.images.all %}
+    <img src="{{ image.ref }}" class="card-img-top" alt="Implementar lógica para exibir múltiplas imagens/anexos">
     {% endfor %}
-  </ul>
+    <p class="card-text"> <a href="{% url 'post_detail' post.id %}">
+        Ver detalhes e comentários
+      </a> </p>
+  </div>
+  {% empty %}
+  <p>Nenhum post disponível.</p>
+  {% endfor %}
+</div>
 {% endblock %}
