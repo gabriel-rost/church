@@ -29,5 +29,6 @@ jobs:
       working-directory: church_project
       env:
         SECRET_KEY: 'test-secret-key-12345'
+        CI: true
       run: |
         python manage.py test
