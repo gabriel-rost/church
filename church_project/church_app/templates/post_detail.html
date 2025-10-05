@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ post.content.title }}</h1>
+
+<p>{{ post.content.text }}</p>
+{% if post.content.attachments.all %}
+  <ul>
+    {% for attachment in post.content.attachments.all %}
+      <li>
+        {% with attachment.file.url|lower as f %}
+          {% if ".jpg" in f or ".jpeg" in f or ".png" in f or ".gif" in f %}
+            <img src="{{ attachment.file.url }}" alt="Anexo" style="max-width:150px;">
+          {% else %}
+            <a href="{{ attachment.file.url }}" target="_blank">
+              📎 {{ attachment.file.name|cut:"archives/" }}
+            </a>
+          {% endif %}
+        {% endwith %}
+      </li>
+    {% empty %}
+      <li>Sem anexos.</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<p>
+  <small>Publicado por {{ post.user.username }} em {{ post.date|date:"d/m/Y H:i" }}</small>
+</p>
+
+<hr>
+
+<h2>Comentários</h2>
+
+<ul>
+  {% for comment in comments %}
+  {% include "church_app/_comment.html" with comment=comment %}
+  {% empty %}
+  <li>Sem comentários ainda.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

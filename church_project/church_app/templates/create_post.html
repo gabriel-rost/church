@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      {{ form.title }}
+
+      <div class="form-group mb-3">
+        {{ form.text }}
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <button type="submit" class="btn btn-primary">Post</button>
+
+        <label for="id_attachments" class="btn btn-light mb-0">
+          <i class="fas fa-camera"></i> Photo/File
+        </label>
+      </div>
+
+      <input type="file" name="attachments" id="id_attachments" multiple class="d-none">
+
+      <div id="file-preview" class="mt-3 d-flex flex-wrap gap-2"></div>
+
+      {% if form.non_field_errors %}
+      <div class="alert alert-danger mt-3">
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const input = document.getElementById("id_attachments");
+  const preview = document.getElementById("file-preview");
+
+  // mantém os arquivos em memória
+  let filesList = [];
+
+  input.addEventListener("change", function() {
+    // adiciona novos arquivos ao array existente
+    filesList = [...filesList, ...Array.from(input.files)];
+
+    // limpa o preview antes de redesenhar
+    preview.innerHTML = "";
+
+    // exibe todos os arquivos acumulados
+    filesList.forEach((file, index) => {
+      const fileContainer = document.createElement("div");
+      fileContainer.classList.add("border", "p-2", "rounded", "text-center", "position-relative");
+      fileContainer.style.width = "120px";
+
+      // botão "x" para remover o arquivo
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.innerHTML = "&times;";
+      removeBtn.classList.add("btn", "btn-sm", "btn-danger", "position-absolute");
+      removeBtn.style.top = "2px";
+      removeBtn.style.right = "2px";
+      removeBtn.onclick = () => {
+        filesList.splice(index, 1);
+        renderPreview();
+      };
+
+      if (file.type.startsWith("image/")) {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        img.alt = file.name;
+        img.classList.add("img-fluid", "rounded");
+        img.style.maxHeight = "100px";
+        fileContainer.appendChild(img);
+      } else {
+        const icon = document.createElement("i");
+        icon.classList.add("fas", "fa-file-alt", "fa-3x", "text-secondary");
+        const name = document.createElement("p");
+        name.classList.add("small", "mt-1");
+        name.textContent = file.name;
+        fileContainer.appendChild(icon);
+        fileContainer.appendChild(name);
+      }
+
+      fileContainer.appendChild(removeBtn);
+      preview.appendChild(fileContainer);
+    });
+
+    // recria o input para refletir o estado atual da lista
+    const dataTransfer = new DataTransfer();
+    filesList.forEach(f => dataTransfer.items.add(f));
+    input.files = dataTransfer.files;
+  });
+
+  function renderPreview() {
+    preview.innerHTML = "";
+    const dataTransfer = new DataTransfer();
+
+    filesList.forEach((file, index) => {
+      dataTransfer.items.add(file);
+
+      const fileContainer = document.createElement("div");
+      fileContainer.classList.add("border", "p-2", "rounded", "text-center", "position-relative");
+      fileContainer.style.width = "120px";
+
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.innerHTML = "&times;";
+      removeBtn.classList.add("btn", "btn-sm", "btn-danger", "position-absolute");
+      removeBtn.style.top = "2px";
+      removeBtn.style.right = "2px";
+      removeBtn.onclick = () => {
+        filesList.splice(index, 1);
+        renderPreview();
+      };
+
+      if (file.type.startsWith("image/")) {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        img.alt = file.name;
+        img.classList.add("img-fluid", "rounded");
+        img.style.maxHeight = "100px";
+        fileContainer.appendChild(img);
+      } else {
+        const icon = document.createElement("i");
+        icon.classList.add("fas", "fa-file-alt", "fa-3x", "text-secondary");
+        const name = document.createElement("p");
+        name.classList.add("small", "mt-1");
+        name.textContent = file.name;
+        fileContainer.appendChild(icon);
+        fileContainer.appendChild(name);
+      }
+
+      fileContainer.appendChild(removeBtn);
+      preview.appendChild(fileContainer);
+    });
+
+    input.files = dataTransfer.files;
+  }
+});
+</script>
+{% endblock %}

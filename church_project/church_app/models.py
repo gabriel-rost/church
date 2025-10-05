@@ -30,7 +30,6 @@ class Archive(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # Usando um nome de campo mais convencional e adicionando related_name
     avatar = models.ForeignKey(
         Archive,
         on_delete=models.SET_NULL,
@@ -38,12 +37,14 @@ class Profile(models.Model):
         blank=True,
         related_name='profile_avatars'
     )
-    # Usando o nome de campo mais comum
     birth_date = models.DateField(null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)        # descrição opcional
+    phone = models.CharField(max_length=20, blank=True)  # telefone opcional
+    location = models.CharField(max_length=100, blank=True)  # cidade/estado opcional
 
     def __str__(self):
-        # Retorno mais descritivo
         return f"Perfil de {self.user.username}"
+
 
 class Content(models.Model):
     title = models.CharField(max_length=256)
