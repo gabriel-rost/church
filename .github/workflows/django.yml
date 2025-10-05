@@ -27,5 +27,7 @@ jobs:
         pip install -r church_project/requirements.txt
     - name: Run Tests
       working-directory: church_project
+      env:
+        SECRET_KEY: 'test-secret-key-12345'
       run: |
         python manage.py test
