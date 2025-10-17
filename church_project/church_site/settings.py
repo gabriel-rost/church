@@ -34,8 +34,11 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
 
+# Configure ALLOWED_HOSTS from environment variable
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
+# Configure CSRF trusted origins from environment variable
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='').split(',')
 
 # Application definition
 
