@@ -1,0 +1,8 @@
+<form method="post" action="{% url 'add_comment' post.id %}">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="commentText" class="form-label">Adicionar Comentário:</label>
+    <textarea class="form-control" id="commentText" name="text" rows="3" required></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Enviar</button>
+</form>

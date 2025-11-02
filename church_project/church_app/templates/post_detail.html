@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
+
+<div class="container my-4">
+<div>
+  <a href="{% url 'post_list' channel_pk=post.channel.id %}" class="btn btn-secondary mb-3">
+    &larr; Voltar para a lista de posts
+  </a>
+</div>
+
 <h1>{{ post.content.title }}</h1>
 
 <p>{{ post.content.text }}</p>
@@ -26,16 +34,28 @@
   <small>Publicado por {{ post.user.username }} em {{ post.date|date:"d/m/Y H:i" }}</small>
 </p>
 
+<a class="btn btn-outline-warning" href="{% url 'edit_post' post.id %}">Editar Publicação</a>
+
+<form id="delete_form" method="POST" action="{% url 'delete_post' post.id %}" style="display:none;">
+    {% csrf_token %}
+    </form>
+
+<button id="delete_button" class="btn btn-outline-danger">Excluir Publicação</button>
+
+<script>
+  document.getElementById("delete_button").addEventListener("click", function(event) {
+    event.preventDefault(); // Impede qualquer ação padrão, embora seja um <button>
+    
+    if (confirm("Tem certeza de que deseja excluir esta publicação? Esta ação não pode ser desfeita.")) {
+      // Se confirmado, submete o formulário POST invisível
+      document.getElementById("delete_form").submit();
+    }
+  });
+</script>
+
 <hr>
 
-<h2>Comentários</h2>
-
-<ul>
-  {% for comment in comments %}
-  {% include "church_app/_comment.html" with comment=comment %}
-  {% empty %}
-  <li>Sem comentários ainda.</li>
-  {% endfor %}
-</ul>
+{% include "comment/_comment_form.html" %}
+{% include "comment/_comment_list.html" with comments=comments %}
 
 {% endblock %}

@@ -2,6 +2,20 @@
 {% block content %}
 <div class="container my-4">
 
+  <div>
+    <a href="{% url 'home' %}" class="btn btn-secondary mb-3">
+      &larr; Voltar para a página inicial
+    </a>
+  
+
+    {% if user.is_authenticated and user.is_staff %}
+    <a href="{% url 'create_post' channel_pk=channel.id %}" class="btn btn-primary mb-3">
+      Criar Novo Post (Somente Staff)
+    </a>
+  </div>
+
+  {% endif %}
+
   <h1 class="mb-4">Posts Recentes</h1>
 
   {% for post in posts %}
@@ -9,6 +23,27 @@
     <div class="card-body">
       <h5 class="card-title"> {{ post.content.title }} </h5>
       <p class="card-text">{{ post.content.text }}</p>
+      <p class="card-text">
+        {% if post.content.attachments.all %}
+      <ul>
+        {% for attachment in post.content.attachments.all %}
+        <li>
+          {% with attachment.file.url|lower as f %}
+          {% if ".jpg" in f or ".jpeg" in f or ".png" in f or ".gif" in f %}
+          <img src="{{ attachment.file.url }}" alt="Anexo" style="max-width:150px;">
+          {% else %}
+          <a href="{{ attachment.file.url }}" target="_blank">
+            📎 {{ attachment.file.name|cut:"archives/" }}
+          </a>
+          {% endif %}
+          {% endwith %}
+        </li>
+        {% empty %}
+        <li>Sem anexos.</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      </p>
       <p class="card-text">
         <small class="text-body-secondary">
           Publicado por {{ post.user.username }} em {{ post.date|date:"d/m/Y H:i" }}

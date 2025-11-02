@@ -15,12 +15,11 @@ from decouple import config
 
 import os
 
+
+
 ENV = config("ENV", default="local")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_URL = '/login/' # Redireciona para a página de login se não estiver autenticado
 LOGIN_REDIRECT_URL = '/home' # Após login, redireciona para a página inicial
@@ -32,7 +31,8 @@ LOGIN_REDIRECT_URL = '/home' # Após login, redireciona para a página inicial
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=False, cast=bool)
+#DEBUG = config("DEBUG", default=False, cast=bool)
+DEBUG = False
 
 # Configure ALLOWED_HOSTS from environment variable
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -164,3 +165,101 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Supabase Storage (S3 compatível)
+# AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+# AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+# AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
+# AWS_S3_ENDPOINT_URL = config('AWS_S3_ENDPOINT_URL')
+# PROJECT_REF = config('PROJECT_REF')
+# AWS_QUERYSTRING_AUTH = False
+
+
+# --- Configurações de Arquivos Estáticos (Essencial para collectstatic) ---
+
+# 1. STATICFILES_DIRS (Opcional, se você tiver arquivos estáticos globais)
+# Onde o Django busca arquivos estáticos em desenvolvimento, além dos 'static' dentro dos apps.
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static_dev'), 
+# ]
+
+# 2. STATIC_ROOT (Obrigatorio para collectstatic)
+# Onde o 'collectstatic' reunirá os arquivos para, então, o STATICFILES_STORAGE enviá-los ao R2.
+# Crie uma pasta 'staticfiles' na raiz do seu projeto (fora do escopo do Git)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# 3. STATIC_URL (URL para acesso público - já deve estar configurado para o R2)
+# STATIC_URL = 'https://<SEU_CUSTOM_DOMAIN_OU_R2_PUBLIC_URL>/static/'
+
+
+
+# --- Configurações Cloudflare R2 (S3-Compatible) ---
+
+# Importante: O R2 usa a API S3. Você usará as chaves e o endpoint do R2.
+
+# 1. Credenciais do Cloudflare R2 (Geradas no painel R2)
+# Recomenda-se carregar de variáveis de ambiente (.env)
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+
+# 2. Nome do seu Bucket R2
+AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
+
+# 3. Endpoint do Cloudflare R2
+# Formato: https://<SEU_ACCOUNT_ID>.r2.cloudflarestorage.com
+AWS_S3_ENDPOINT_URL = f'https://{config("ACCOUNT_ID")}.r2.cloudflarestorage.com'
+
+# 4. Versão da assinatura (necessário para R2)
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+# 5. Configuração para Media Files (Uploads de Usuário - FileField/ImageField)
+# Use o backend S3Boto3Storage para R2
+#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_S3_FILE_OVERWRITE = False # Não sobrescrever arquivos com o mesmo nome
+
+# 6. (Opcional) Configuração para Static Files (CSS, JS, Imagens do Projeto)
+# Se você quiser servir arquivos estáticos pelo R2 (muito comum em produção)
+#STATICFILES_STORAGE = 'church_site.storage_backends.R2StaticStorage'
+# URL base para os arquivos estáticos (pode ser o R2 public bucket URL ou um Cloudflare Custom Domain)
+AWS_LOCATION = 'static'
+STATIC_URL = f'https://{config("ACCOUNT_ID")}.r2.cloudflarestorage.com/{config("AWS_STORAGE_BUCKET_NAME")}/{AWS_LOCATION}/'
+
+AWS_DEFAULT_ACL = 'public-read'
+
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+# --- Configuração Moderna de Storages (Django 4.2+) ---
+
+STORAGES = {
+    # 1. Configuração Padrão de Arquivos (Uploads de Usuário/Media)
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "endpoint_url": AWS_S3_ENDPOINT_URL,
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "location": "", # Opcional: define uma pasta 'media/' para uploads
+            "default_acl": "public-read",
+            "file_overwrite": False,
+        }
+    },
+    
+    # 2. Configuração de Arquivos Estáticos (collectstatic)
+    "staticfiles": {
+        # Usamos a classe customizada que herda S3ManifestStaticStorage
+        "BACKEND": "church_site.storage_backends.R2StaticStorage", 
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "endpoint_url": AWS_S3_ENDPOINT_URL,
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "location": AWS_LOCATION, # O valor 'static' definido anteriormente
+            "default_acl": "public-read",
+            # Outras opções R2/S3
+            "url_protocol": "https:", # Garante URLs corretas
+            "signature_version": "s3v4", # OBRIGATÓRIO para R2
+        }
+    },
+}
+
