@@ -16,4 +16,4 @@ class HomeViewTest(TestCase):
         self.client.login(username="joao", password="123456")
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "church_app/post_list.html")
+        self.assertTemplateUsed(response, "home.html")
