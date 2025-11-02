@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-4">
+    <h1>Welcome to the Church App</h1>
+    <p>This is the home page.</p>
+    <div>
+        <h1>Canais</h1>
+        {% for channel in channels %}
+        <a href="{% url 'post_list' channel_pk=channel.id %}" class="btn btn-secondary">{{ channel.name }}</a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
