@@ -35,5 +35,6 @@ jobs:
         AWS_SECRET_ACCESS_KEY: "mock_secret_key"
         AWS_STORAGE_BUCKET_NAME: "mock-bucket"
         AWS_S3_ENDPOINT_URL: "https://mock.endpoint"
+        ACCOUNT_ID: "mock_account_id"
       run: |
         python manage.py test
