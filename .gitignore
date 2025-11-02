@@ -9,3 +9,5 @@ church_project/church_app/migrations
 .env
 /church_project/media/archives/
 __pycache__
+church_project/staticfiles/
+db.sqlite3

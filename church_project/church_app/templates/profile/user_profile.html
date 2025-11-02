@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+    <div>
+        <a href="{% url 'home' %}" class="btn btn-secondary mb-3">
+            &larr; Voltar para a página inicial
+        </a>
+    </div>
+    <h1>Página de Perfil</h1>
+    <p>Bem-vindo, {{ user.username }} à sua página de perfil!</p>
+    <img class="img-thumbnail" src="{{ user.profile.avatar.url }}" alt="Icon de usuário" style="max-width:150px;">
+    <p>Nome Completo: {{ user.get_full_name }}</p>
+    <p>Apelido: {{ user.username }}</p>
+    <p>Bio: {{ user.profile.bio }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Data de Nascimento: {{ user.profile.birth_date }}</p>
+    <p>Telefone: {{ user.profile.phone }}</p>
+    <p>Localização: {{ user.profile.location }}</p>
+    <p>Usuário desde: {{ user.date_joined }}</p>
+</div>
+{% endblock %}

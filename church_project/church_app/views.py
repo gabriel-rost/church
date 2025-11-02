@@ -10,18 +10,15 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout, login
 from .forms import SignUpForm
+from django.contrib import messages # Para feedback visual ao usuário
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 
-@staff_member_required
-def index(request):
-    posts = Post.objects.all().order_by("-date")
-    return render(request, "church_app/post_list.html", {"posts": posts})
-
 @login_required
 def home(request):
-    posts = Post.objects.all().order_by("-date")
-    return render(request, "church_app/post_list.html", {"posts": posts})
+    channels = Channel.objects.all()
+    return render(request, "home.html", {"channels": channels})
 
 @login_required
 def post(request, post_id):
@@ -50,7 +47,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponse("Logout successful")
+    return HttpResponse("<script>alert('Logout successful'); window.location='/login';</script>")
 
 @login_required
 @transaction.atomic # Garante que tudo seja salvo ou nada seja salvo
@@ -100,6 +97,7 @@ def create_post(request, channel_pk):
     }
     return render(request, 'create_post.html', context)
 
+@transaction.atomic
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -111,3 +109,106 @@ def signup_view(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+
+    if request.method == 'POST':
+        text = request.POST.get('text')
+        parent_id = request.POST.get('commentId')
+
+        if not text:
+            return redirect('post_detail', post_id=post_id)
+
+        if parent_id:  # é uma resposta
+            parent_comment = post.comments.filter(id=parent_id).first()
+            if parent_comment:
+                post.comments.create(user=request.user, text=text, parent=parent_comment)
+        else:  # é um comentário principal
+            post.comments.create(user=request.user, text=text)
+
+    return redirect('post_detail', post_id=post_id)
+
+@login_required
+def perfil_view(request, username):
+    if request.user.username != username:
+        return HttpResponse("Você não tem permissão para ver este perfil.", status=403)
+    return render(request, "profile/user_profile.html")
+
+@login_required
+@transaction.atomic
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    content = post.content  # conteúdo relacionado ao post
+    
+    if request.method == 'POST':
+        form = ContentForm(request.POST, instance=content)
+        uploaded_files = request.FILES.getlist('attachments')
+
+        if form.is_valid():
+            content = form.save()
+
+            # 🔹 Adicionar novos arquivos
+            new_archives = []
+            for uploaded_file in uploaded_files:
+                archive = Archive.objects.create(file=uploaded_file)
+                new_archives.append(archive)
+
+            # Mantém os arquivos antigos + novos
+            content.attachments.add(*new_archives)
+
+            # Se o usuário clicar em "Salvar", não apaga nada ainda
+            # (A exclusão pode ser feita em um form separado)
+            return redirect('post_detail', post_id=post.pk)
+    else:
+        form = ContentForm(instance=content)
+
+    # 🔹 Lista atual de anexos
+    archive = content.attachments.all()
+
+    context = {
+        'form': form,
+        'post': post,
+        'archive': archive
+    }
+    return render(request, 'post/edit_post.html', context)
+
+@login_required
+@transaction.atomic
+def remove_attachment(request, attachment_id):
+    # Garante que a deleção ocorra apenas via POST
+    if request.method == 'POST':
+        attachment = get_object_or_404(Archive, pk=attachment_id)
+        
+        try:
+            # 1. Remove o arquivo do Cloudflare R2
+            attachment.file.delete(save=False)
+            
+            # 2. Remove o registro do PostgreSQL
+            attachment.delete()
+            
+            # Adiciona uma mensagem de sucesso para o usuário
+            messages.success(request, f"Anexo '{attachment.filename}' removido com sucesso.")
+
+        except Exception as e:
+            # Em caso de falha de deleção do R2 ou do banco
+            messages.error(request, f"Erro ao remover anexo: {e}")
+        
+        # 3. Redireciona para a página anterior (HTTP_REFERER)
+        # Se o HTTP_REFERER não existir (por segurança), redireciona para uma URL segura (ex: lista de posts)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/')) 
+        
+    # Se o método não for POST (o que não deve acontecer pelo seu formulário), retorna 405
+    return HttpResponse("Método não permitido", status=405)
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+
+    if request.method == 'POST' and request.user == post.user:
+        channel_pk = post.channel.pk
+        post.delete()
+        return redirect('post_list', channel_pk=channel_pk)
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
