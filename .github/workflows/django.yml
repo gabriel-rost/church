@@ -30,5 +30,12 @@ jobs:
       env:
         SECRET_KEY: 'test-secret-key-12345'
         CI: true
+        DJANGO_SETTINGS_MODULE: church_site.settings
+        AWS_ACCESS_KEY_ID: "mock_access_key"
+        AWS_SECRET_ACCESS_KEY: "mock_secret_key"
+        AWS_STORAGE_BUCKET_NAME: "mock-bucket"
+        AWS_S3_ENDPOINT_URL: "https://mock.endpoint"
+        ACCOUNT_ID: "mock_account_id"
+        CSRF_TRUSTED_ORIGINS: "http://localhost"
       run: |
         python manage.py test
