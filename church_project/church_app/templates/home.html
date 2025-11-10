@@ -1,13 +1,103 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container my-4">
-    <h1>Welcome to the Church App</h1>
-    <p>This is the home page.</p>
-    <div>
-        <h1>Canais</h1>
-        {% for channel in channels %}
-        <a href="{% url 'post_list' channel_pk=channel.id %}" class="btn btn-secondary">{{ channel.name }}</a>
+    
+    <div class="p-4 p-md-5 mb-4 text-white bg-primary rounded-3 shadow-sm">
+        <div class="col-md-10 px-0">
+            {% if user.is_authenticated %}
+                <h1 class="display-5 fw-bold">Bem-vindo(a) de volta, {{ user.username }}!</h1>
+                <p class="lead my-3">Confira as últimas novidades e o que está acontecendo na nossa comunidade hoje.</p>
+                <a href="{% url 'perfil' user.username %}" class="btn btn-light btn-sm mt-2">Acessar Meu Perfil &rarr;</a>
+            {% else %}
+                <h1 class="display-5 fw-bold">Bem-vindo(a) ao Church App</h1>
+                <p class="lead my-3">Conecte-se com a comunidade, acompanhe eventos e leia posts inspiradores.</p>
+                <a href="{% url 'login' %}" class="btn btn-light btn-sm mt-2">Fazer Login ou Cadastrar-se &rarr;</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-primary">📚 Navegar por Tópicos</h5>
+                    <p class="card-text text-muted small">Acesse feeds específicos de conteúdo.</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for channel in channels %}
+                        <a href="{% url 'post_list' channel_pk=channel.id %}" class="btn btn-outline-primary btn-sm rounded-pill">
+                            #{{ channel.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100 bg-light">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-success">🗓️ Próximo Evento</h5>
+                    
+                    {% comment %}
+                    {% if next_event %}
+                        <h6 class="card-subtitle mb-2 text-muted">{{ next_event.date|date:"d/m - H:i" }}</h6>
+                        <p class="card-text">{{ next_event.description|truncatechars:100 }}</p>
+                        <a href="{% url 'event_detail' next_event.id %}" class="card-link">Detalhes do Evento &rarr;</a>
+                    {% else %}
+                        <p class="card-text">Nenhum evento agendado para os próximos dias.</p>
+                    {% endif %}
+                    {% endcomment %}
+                    
+                    <p class="card-text">Nenhum evento agendado para os próximos dias.</p>
+                    <a href="#" class="card-link">Ver Calendário Completo</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-danger">🔥 Destaque da Semana</h5>
+                    <p class="card-text small text-muted">A mensagem mais recente ou importante.</p>
+                    
+                    {% comment %}
+                    {% if featured_post %}
+                        <p class="fw-medium mb-1">{{ featured_post.content.title }}</p>
+                        <p class="small text-muted mb-2">Por {{ featured_post.user.username }}</p>
+                        <a href="{% url 'post_detail' featured_post.id %}" class="card-link">Ler Post Completo &rarr;</a>
+                    {% else %}
+                        <p class="card-text">Nenhum destaque disponível no momento.</p>
+                    {% endif %}
+                    {% endcomment %}
+                    
+                    <p class="card-text">Nenhum destaque disponível no momento.</p>
+                    <a href="#" class="card-link">Ver Feed Completo</a>
+                </div>
+            </div>
+        </div>
+
+    </div> ---
+    
+    <h2 class="mt-5 mb-3 text-secondary">Últimas Publicações do Feed</h2>
+    <div class="row g-4">
+        {% comment %}
+        {% for post in recent_posts|slice:":3" %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <h6 class="fw-bold">{{ post.content.title|truncatechars:40 }}</h6>
+                        <p class="card-text small text-muted">{{ post.content.text|truncatechars:80 }}</p>
+                        <a href="{% url 'post_detail' post.id %}" class="btn btn-sm btn-outline-info">Continuar Lendo</a>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
+        {% endcomment %}
+        
+        <div class="col-12">
+            <p class="text-center text-muted">Ainda não implementado: Exibir 3 posts recentes aqui.</p>
+        </div>
     </div>
 </div>
 {% endblock %}

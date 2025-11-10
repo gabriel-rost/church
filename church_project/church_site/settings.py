@@ -22,7 +22,7 @@ ENV = config("ENV", default="local")
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 LOGIN_URL = '/login/' # Redireciona para a página de login se não estiver autenticado
-LOGIN_REDIRECT_URL = '/home' # Após login, redireciona para a página inicial
+LOGIN_REDIRECT_URL = '/' # Após login, redireciona para a página inicial
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -32,7 +32,7 @@ SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = config("DEBUG", default=False, cast=bool)
-DEBUG = False
+DEBUG = True
 
 # Configure ALLOWED_HOSTS from environment variable
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
