@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/gabriel-rost/church/compare/v1.1.0...v1.2.0) (2025-11-12)
+
+
+### Bug Fixes
+
+* update Content model fields to allow blank title and enforce non-blank text; modify __str__ method to return first 50 characters of text ([026304a](https://github.com/gabriel-rost/church/commit/026304a1c3b46b13f5aca75c9bda50a30eebd90a))
+
+
+### Features
+
+* add back navigation button to create post template for improved user experience ([dd924e3](https://github.com/gabriel-rost/church/commit/dd924e369b0a66775bf86d1c1223eb80fd0090ba))
+
 # [1.1.0](https://github.com/gabriel-rost/church/compare/v1.0.0...v1.1.0) (2025-11-12)
 
 
