@@ -212,3 +212,42 @@ def delete_post(request, post_id):
         return redirect('post_list', channel_pk=channel_pk)
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+# @login_required
+# @transaction.atomic
+# def edit_user_profile(request):
+#     profile = request.user.profile
+
+#     if request.method == 'POST':
+#         from .forms import ProfileForm  # Importa aqui para evitar importação circular
+#         form = ProfileForm(request.POST, request.FILES, instance=profile)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('perfil', username=request.user.username)
+#     else:
+#         from .forms import ProfileForm
+#         form = ProfileForm(instance=profile)
+
+#     return render(request, 'profile/edit_user_profile.html', {'form': form})
+
+def edit_user_profile(request):
+    from .forms import ProfileForm, UserForm  # Importa aqui para evitar importação circular
+    profile = request.user.profile
+
+    if request.method == 'POST':
+        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
+        user_form = UserForm(request.POST, instance=request.user)
+
+        if profile_form.is_valid() and user_form.is_valid():
+            profile_form.save()
+            user_form.save()
+            return redirect('perfil', username=request.user.username)
+    else:
+        profile_form = ProfileForm(instance=profile)
+        user_form = UserForm(instance=request.user)
+
+    context = {
+        'profile_form': profile_form,
+        'user_form': user_form
+    }
+    return render(request, 'profile/edit_user_profile.html', context)
