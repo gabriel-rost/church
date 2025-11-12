@@ -66,12 +66,12 @@ class Profile(models.Model):
 
 
 class Content(models.Model):
-    title = models.CharField(max_length=256)
-    text = models.TextField(blank=True)
+    title = models.CharField(max_length=256, blank=True)
+    text = models.TextField(blank=False)
     attachments = models.ManyToManyField(Archive, blank=True, related_name='contents')
 
     def __str__(self):
-        return self.title
+        return self.text[:50]  # Retorna os primeiros 50 caracteres do texto como representação
 
 class Channel(models.Model):
     name = models.CharField(max_length=50)
