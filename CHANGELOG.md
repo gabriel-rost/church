@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/gabriel-rost/church/compare/v1.0.0...v1.1.0) (2025-11-12)
+
+
+### Features
+
+* enhance user interface and experience across templates, improve login and signup forms, and update profile display ([f46e150](https://github.com/gabriel-rost/church/commit/f46e1502729ac20e990ba3de8446247a3d98e676))
+
 # 1.0.0 (2025-11-02)
 
 
