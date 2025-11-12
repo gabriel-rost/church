@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/gabriel-rost/church/compare/v1.2.0...v1.3.0) (2025-11-12)
+
+
+### Features
+
+* add user profile editing functionality with forms and templates ([4afe46b](https://github.com/gabriel-rost/church/commit/4afe46bf936e8df48bd1e2aff81ecfd2adce699f))
+
 # [1.2.0](https://github.com/gabriel-rost/church/compare/v1.1.0...v1.2.0) (2025-11-12)
 
 
