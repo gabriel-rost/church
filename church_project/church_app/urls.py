@@ -16,4 +16,5 @@ urlpatterns = [
     path('post/<int:post_id>/edit/', views.edit_post, name='edit_post'),  # Rota para editar um post
     path('attachment/<int:attachment_id>/remove/', views.remove_attachment, name='remove_attachment'),  # Rota para remover um anexo
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),  # Rota para deletar um post
+    path('profile/edit/', views.edit_user_profile, name='edit_user_profile'),  # Rota para editar o perfil do usuário
 ]
