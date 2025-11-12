@@ -1,39 +1,80 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5" style="max-width: 400px;">
-    <h2 class="mb-4 text-center">Login</h2>
+<div class="container d-flex justify-content-center mt-5">
+    <div class="card shadow-lg p-4" style="max-width: 450px; width: 100%;">
+        <div class="card-body">
+            <h2 class="mb-4 text-center fw-bold text-primary">👋 Fazer Login</h2>
 
-    {% if form.non_field_errors %}
-        <div class="alert alert-danger">
-            {{ form.non_field_errors }}
-        </div>
-    {% endif %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger text-center" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> 
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
 
-    {% if next %}
-        {% if user.is_authenticated %}
-            <div class="alert alert-warning">
-                Your account doesn't have access to this page. Please login with an account that has access.
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <div class="alert alert-warning small text-center" role="alert">
+                        Sua conta não tem acesso a esta página. Faça login com uma conta autorizada.
+                    </div>
+                {% else %}
+                    <div class="alert alert-info small text-center" role="alert">
+                        Por favor, faça login para visualizar esta página.
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="id_username" class="form-label fw-semibold">Usuário</label>
+                    <input type="text" 
+                           name="{{ form.username.name }}" 
+                           id="id_username" 
+                           class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                           placeholder="Seu nome de usuário"
+                           value="{{ form.username.value|default:'' }}" 
+                           required>
+                    {% if form.username.errors %}
+                        <div class="invalid-feedback d-block small mt-1">
+                            {% for error in form.username.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_password" class="form-label fw-semibold">Senha</label>
+                    <input type="password" 
+                           name="{{ form.password.name }}" 
+                           id="id_password" 
+                           class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                           placeholder="Sua senha"
+                           required>
+                    {% if form.password.errors %}
+                        <div class="invalid-feedback d-block small mt-1">
+                             {% for error in form.password.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <input type="hidden" name="next" value="{{ next }}">
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mb-3">Entrar</button>
+            </form>
+            
+            <div class="text-center mt-3">
+                <p class="text-muted mb-0">Não tem uma conta?</p>
+                <a href="{% url 'signup' %}" class="text-decoration-none fw-semibold">Crie sua conta aqui!</a>
             </div>
-        {% else %}
-            <div class="alert alert-info">
-                Please login to see this page.
-            </div>
-        {% endif %}
-    {% endif %}
 
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="id_username">{{ form.username.label }}</label>
-            <input type="text" name="{{ form.username.name }}" id="id_username" class="form-control" value="">
         </div>
-        <div class="mb-3">
-            <label for="id_password">{{ form.password.label }}</label>
-            <input type="password" name="{{ form.password.name }}" id="id_password" class="form-control">
-        </div>
-        <input type="hidden" name="next" value="{{ next }}">
-        <button type="submit" class="btn btn-primary w-100">Login</button>
-    </form>
+    </div>
 </div>
 {% endblock %}
