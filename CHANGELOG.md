@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/gabriel-rost/church/compare/v1.3.0...v1.3.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* update deployment path to target church_project directory ([5ff4a0c](https://github.com/gabriel-rost/church/commit/5ff4a0c37a9feaff8e9368565b9ac86b96ab721b))
+
 # [1.3.0](https://github.com/gabriel-rost/church/compare/v1.2.0...v1.3.0) (2025-11-12)
 
 
