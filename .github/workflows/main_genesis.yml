@@ -39,7 +39,7 @@ jobs:
         with:
           name: python-app
           path: |
-            .
+            ./church_project
             !antenv/
 
       # 🚫 Opting Out of Oryx Build
