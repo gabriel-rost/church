@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load markdown_extras %}
+
+
+{% block content %}
+<div class="container my-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+        <h1 class="h3 mb-0 fw-bold text-info">✨ Histórico de Atualizações (Changelog)</h1>
+    </div>
+
+    <div class="card shadow-lg">
+        <div class="card-body p-4 p-md-5">
+            
+            <h2 class="mb-4 text-primary">Detalhes da Versão</h2>
+            
+            <div class="markdown-output">
+                {{ markdown_text|convert_markdown }}
+            </div>
+
+            <hr class="my-4">
+            <p class="small text-muted mb-0">
+                Estas informações são geradas a partir do nosso repositório oficial.
+            </p>
+        </div>
+    </div>
+    
+</div>
+
+<style>
+/* Isso é importante para garantir que o HTML gerado pelo Markdown 
+    (h1, h2, ul, li, p) tenha um visual limpo dentro do card.
+*/
+.markdown-output h1 {
+    font-size: 1.8rem;
+    color: var(--bs-primary);
+    border-bottom: 2px solid var(--bs-light);
+    padding-bottom: .3rem;
+    margin-top: 1.5rem;
+}
+.markdown-output h2 {
+    font-size: 1.5rem;
+    color: var(--bs-secondary);
+    margin-top: 1.5rem;
+}
+.markdown-output ul {
+    padding-left: 20px;
+    list-style: disc;
+}
+.markdown-output li {
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}
