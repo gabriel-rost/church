@@ -77,6 +77,36 @@
             </div>
         </div>
 
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-info">🚀 Última Atualização</h5>
+                    <p class="card-text small text-muted">As novidades e melhorias mais recentes da plataforma.</p>
+                    
+                    {% comment %}
+                    Assumimos que 'changelog_data' é uma lista de commits ou releases e pegamos o primeiro item.
+                    {% endcomment %}
+                    {% if changelog_data and changelog_data|length > 0 %}
+                        {% with latest_commit=changelog_data.0 %}
+                            <p class="fw-medium mb-1">{{ latest_commit.message|truncatechars:70 }}</p>
+                            
+                            <p class="small text-muted mb-2">
+                                <i class="bi bi-clock me-1"></i> {{ latest_commit.date|date:"d/m/Y" }} | 
+                                <i class="bi bi-code me-1"></i> {{ latest_commit.sha }}
+                            </p>
+                            
+                            <a href="{% url 'changelog' %}" class="card-link text-info">
+                                Ver Todos os Detalhes &rarr;
+                            </a>
+                        {% endwith %}
+                    {% else %}
+                        <p class="card-text">Nenhuma nota de atualização disponível no momento.</p>
+                        <a href="{% url 'changelog' %}" class="card-link">Ver Página de Atualizações</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
     </div> ---
     
     <h2 class="mt-5 mb-3 text-secondary">Últimas Publicações do Feed</h2>
