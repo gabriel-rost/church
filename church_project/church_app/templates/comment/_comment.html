@@ -1,31 +1,40 @@
-<li>
-  <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
-  <br>
-  <small>{{ comment.date|date:"d/m/Y H:i" }}</small>
+<li class="comment-item p-3 mb-2 border-bottom">
+  
+    <div class="d-flex align-items-start">
+        <i class="bi bi-person-circle fs-6 me-2 text-secondary"></i>
+        <div class="w-100">
+            <div class="d-flex align-items-center mb-1">
+                <strong class="me-2">{{ comment.user.username }}</strong>
+                <small class="text-muted">· {{ comment.date|date:"d/m/Y H:i" }}</small>
+            </div>
+            <p class="mb-2 text-break small">{{ comment.text }}</p>
 
-  <!-- Botão para mostrar o formulário -->
-  <button class="btn btn-sm btn-link" type="button" onclick="toggleReplyForm({{ comment.id }})">
-    Responder
-  </button>
+            <button class="btn btn-link btn-sm text-primary p-0" type="button" onclick="toggleReplyForm({{ comment.id }})">
+                <i class="bi bi-reply-fill"></i> Responder
+            </button>
+        </div>
+    </div>
 
-  <!-- Formulário escondido inicialmente -->
-  <div id="reply-form-{{ comment.id }}" style="display: none; margin-top: 5px;">
-    <form method="post" action="{% url 'add_comment' post.id %}">
-      {% csrf_token %}
-      <input type="hidden" name="commentId" value="{{ comment.id }}">
-      <textarea name="text" class="form-control mb-2" rows="2" placeholder="Digite sua resposta..." required></textarea>
-      <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
-      <button type="button" class="btn btn-secondary btn-sm" onclick="toggleReplyForm({{ comment.id }})">Cancelar</button>
-    </form>
-  </div>
+    <div id="reply-form-{{ comment.id }}" style="display: none; margin-top: 5px;" class="ps-4 mt-2">
+        <form method="post" action="{% url 'add_comment' post.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="commentId" value="{{ comment.id }}">
+            <textarea name="text" class="form-control mb-2 form-control-sm" rows="2" placeholder="Digite sua resposta..." required></textarea>
+            
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary btn-sm me-2">Enviar</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="toggleReplyForm({{ comment.id }})">Cancelar</button>
+            </div>
+        </form>
+    </div>
 
-  {% if comment.replies.all %}
-  <ul>
-    {% for reply in comment.replies.all %}
-      {% include "church_app/_comment.html" with comment=reply %}
-    {% endfor %}
-  </ul>
-  {% endif %}
+    {% if comment.replies.all %}
+    <ul class="list-unstyled mt-2 ps-4">
+        {% for reply in comment.replies.all %}
+            {% include "church_app/_comment.html" with comment=reply %}
+        {% endfor %}
+    </ul>
+    {% endif %}
 </li>
 
 <script>

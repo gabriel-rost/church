@@ -1,9 +1,9 @@
-<h2>Comentários</h2>
+<h2 class="mb-4 fw-bold text-primary"><i class="bi bi-chat-left-text me-2"></i> Comentários</h2>
 
-<ul class="list-unstyled">
+<ul class="list-unstyled comment-list">
 {% for comment in comments %}
     {% include "comment/_comment.html" with comment=comment %}
     {% empty %}
-    <li>Sem comentários ainda.</li>
+    <li class="p-3 text-muted border rounded-3 bg-light">Sem comentários ainda. Seja o primeiro a comentar!</li>
 {% endfor %}
 </ul>
