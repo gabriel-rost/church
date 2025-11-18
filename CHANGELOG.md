@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/gabriel-rost/church/compare/v1.4.0...v1.5.0) (2025-11-18)
+
+
+### Features
+
+* add changelog feature with markdown rendering; implement changelog view and template, and update home page to display latest updates ([e3e2751](https://github.com/gabriel-rost/church/commit/e3e2751baf214008be5610f08def488f604b0e1a))
+
 # [1.4.0](https://github.com/gabriel-rost/church/compare/v1.3.1...v1.4.0) (2025-11-18)
 
 
