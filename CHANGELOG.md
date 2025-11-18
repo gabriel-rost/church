@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/gabriel-rost/church/compare/v1.3.1...v1.4.0) (2025-11-18)
+
+
+### Features
+
+* enhance comment and post templates with improved styling and functionality; add responsive design elements and user-friendly features ([6d51b52](https://github.com/gabriel-rost/church/commit/6d51b5286db019faa6f8ae83ed8bf1a59cc910b6))
+
 ## [1.3.1](https://github.com/gabriel-rost/church/compare/v1.3.0...v1.3.1) (2025-11-17)
 
 
