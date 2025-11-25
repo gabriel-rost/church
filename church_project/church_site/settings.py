@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -221,8 +222,14 @@ AWS_S3_FILE_OVERWRITE = False # Não sobrescrever arquivos com o mesmo nome
 # Se você quiser servir arquivos estáticos pelo R2 (muito comum em produção)
 #STATICFILES_STORAGE = 'church_site.storage_backends.R2StaticStorage'
 # URL base para os arquivos estáticos (pode ser o R2 public bucket URL ou um Cloudflare Custom Domain)
-AWS_LOCATION = 'static'
-STATIC_URL = f'https://{config("ACCOUNT_ID")}.r2.cloudflarestorage.com/{config("AWS_STORAGE_BUCKET_NAME")}/{AWS_LOCATION}/'
+
+#AWS_LOCATION = 'static'
+#STATIC_URL = f'https://{config("ACCOUNT_ID")}.r2.cloudflarestorage.com/{config("AWS_STORAGE_BUCKET_NAME")}/{AWS_LOCATION}/'
+
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 AWS_DEFAULT_ACL = 'public-read'
 
@@ -245,21 +252,27 @@ STORAGES = {
         }
     },
     
-    # 2. Configuração de Arquivos Estáticos (collectstatic)
+    # # 2. Configuração de Arquivos Estáticos (collectstatic)
+    # "staticfiles": {
+    #     # Usamos a classe customizada que herda S3ManifestStaticStorage
+    #     "BACKEND": "church_site.storage_backends.R2StaticStorage", 
+    #     "OPTIONS": {
+    #         "bucket_name": AWS_STORAGE_BUCKET_NAME,
+    #         "endpoint_url": AWS_S3_ENDPOINT_URL,
+    #         "access_key": AWS_ACCESS_KEY_ID,
+    #         "secret_key": AWS_SECRET_ACCESS_KEY,
+    #         "location": AWS_LOCATION, # O valor 'static' definido anteriormente
+    #         "default_acl": "public-read",
+    #         # Outras opções R2/S3
+    #         "url_protocol": "https:", # Garante URLs corretas
+    #         "signature_version": "s3v4", # OBRIGATÓRIO para R2
+    #     }
+    # },
     "staticfiles": {
-        # Usamos a classe customizada que herda S3ManifestStaticStorage
-        "BACKEND": "church_site.storage_backends.R2StaticStorage", 
-        "OPTIONS": {
-            "bucket_name": AWS_STORAGE_BUCKET_NAME,
-            "endpoint_url": AWS_S3_ENDPOINT_URL,
-            "access_key": AWS_ACCESS_KEY_ID,
-            "secret_key": AWS_SECRET_ACCESS_KEY,
-            "location": AWS_LOCATION, # O valor 'static' definido anteriormente
-            "default_acl": "public-read",
-            # Outras opções R2/S3
-            "url_protocol": "https:", # Garante URLs corretas
-            "signature_version": "s3v4", # OBRIGATÓRIO para R2
-        }
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
 }
 
