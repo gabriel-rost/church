@@ -159,7 +159,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+#STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -222,13 +222,15 @@ AWS_S3_FILE_OVERWRITE = False # Não sobrescrever arquivos com o mesmo nome
 #STATICFILES_STORAGE = 'church_site.storage_backends.R2StaticStorage'
 # URL base para os arquivos estáticos (pode ser o R2 public bucket URL ou um Cloudflare Custom Domain)
 AWS_LOCATION = 'static'
-STATIC_URL = f'https://{config("ACCOUNT_ID")}.r2.cloudflarestorage.com/{config("AWS_STORAGE_BUCKET_NAME")}/{AWS_LOCATION}/'
+#STATIC_URL = 'https://pub-ba1a1273b7274c32ada11ba5a4254e40.r2.dev/'
 
 AWS_DEFAULT_ACL = 'public-read'
 
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 
 # --- Configuração Moderna de Storages (Django 4.2+) ---
+
+STATIC_URL = "https://pub-ba1a1273b7274c32ada11ba5a4254e40.r2.dev/static/"
 
 STORAGES = {
     # 1. Configuração Padrão de Arquivos (Uploads de Usuário/Media)
@@ -245,21 +247,9 @@ STORAGES = {
         }
     },
     
-    # 2. Configuração de Arquivos Estáticos (collectstatic)
+    # # 2. Configuração de Arquivos Estáticos (collectstatic)
+    # # STATICFILES
     "staticfiles": {
-        # Usamos a classe customizada que herda S3ManifestStaticStorage
-        "BACKEND": "church_site.storage_backends.R2StaticStorage", 
-        "OPTIONS": {
-            "bucket_name": AWS_STORAGE_BUCKET_NAME,
-            "endpoint_url": AWS_S3_ENDPOINT_URL,
-            "access_key": AWS_ACCESS_KEY_ID,
-            "secret_key": AWS_SECRET_ACCESS_KEY,
-            "location": AWS_LOCATION, # O valor 'static' definido anteriormente
-            "default_acl": "public-read",
-            # Outras opções R2/S3
-            "url_protocol": "https:", # Garante URLs corretas
-            "signature_version": "s3v4", # OBRIGATÓRIO para R2
-        }
+        "BACKEND": "church_site.storage_backends.R2StaticStorage",
     },
 }
-
