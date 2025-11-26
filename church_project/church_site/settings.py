@@ -229,6 +229,16 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 
 # --- Configuração Moderna de Storages (Django 4.2+) ---
 
+IS_BUILD = os.environ.get("DJANGO_DOCKER_BUILD") == "1"
+
+if IS_BUILD:
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {
+            "BACKEND": "church_site.storage_backends_build.BuildStaticStorage"
+        }
+    }
+
 STORAGES = {
     # 1. Configuração Padrão de Arquivos (Uploads de Usuário/Media)
     "default": {
