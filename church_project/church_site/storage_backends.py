@@ -1,8 +1,7 @@
-# Seu projeto/storage_backends.py (Exemplo: church_site/storage_backends.py)
+from storages.backends.s3boto3 import S3Boto3Storage
 
-from storages.backends.s3boto3 import S3ManifestStaticStorage
-
-class R2StaticStorage(S3ManifestStaticStorage):
-    # O bucket (media) e o prefixo (static) já estão definidos 
-    # nas variáveis AWS_STORAGE_BUCKET_NAME e AWS_LOCATION do settings.py
-    pass
+class R2StaticStorage(S3Boto3Storage):
+    location = "static"               # garante caminho correto
+    default_acl = "public-read"
+    file_overwrite = True
+    custom_domain = "pub-ba1a1273b7274c32ada11ba5a4254e40.r2.dev"
