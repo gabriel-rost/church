@@ -31,8 +31,7 @@ LOGIN_REDIRECT_URL = '/' # Após login, redireciona para a página inicial
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = config("DEBUG", default=False, cast=bool)
-DEBUG = True
+DEBUG = config("DEBUG", default=False, cast=bool)
 
 # Configure ALLOWED_HOSTS from environment variable
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
@@ -231,6 +230,15 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 # --- Configuração Moderna de Storages (Django 4.2+) ---
 
 STATIC_URL = "https://pub-ba1a1273b7274c32ada11ba5a4254e40.r2.dev/static/"
+IS_BUILD = os.environ.get("DJANGO_DOCKER_BUILD") == "1"
+
+if IS_BUILD:
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {
+            "BACKEND": "church_site.storage_backends_build.BuildStaticStorage"
+        }
+    }
 
 STORAGES = {
     # 1. Configuração Padrão de Arquivos (Uploads de Usuário/Media)
