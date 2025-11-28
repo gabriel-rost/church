@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Add Channel{% endblock %}
+{% block content %}
+<form action="{% url 'channel/add_channel' %}" method="post">
+    {% csrf_token %}
+    <label for="name">Channel Name:</label>
+    <input type="text" id="name" name="name" required>
+    <button type="submit">Add Channel</button>
+</form>
+{% endblock %}

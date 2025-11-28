@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Editar Canal: {{ channel.name }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+        <h1 class="h3 mb-0 fw-bold text-primary">✏️ Editar Canal: {{ channel.name }}</h1>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg p-4">
+                <div class="card-body">
+                    <form action="{% url 'edit_channel' channel.pk %}" method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-semibold">Nome do Canal</label>
+                            <input type="text" id="name" name="name" 
+                                   value="{{ channel.name }}" 
+                                   class="form-control" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="memberSearch" class="form-label fw-semibold">Gerenciar Membros</label>
+                            
+                            <input type="text" id="memberSearch" class="form-control mb-2" 
+                                   placeholder="Pesquisar usuários por nome...">
+                            
+                            <select id="members" name="members" multiple 
+                                    class="form-select" size="10" required>
+                                {% for user in all_users %}
+                                    <option value="{{ user.pk }}" 
+                                            data-username="{{ user.username|lower }}" 
+                                            {% if user in channel.members.all %}selected{% endif %}>
+                                        {{ user.username }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">
+                                Segure **Ctrl** (Windows/Linux) ou **Cmd** (Mac) para selecionar múltiplos membros.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">
+                            <i class="bi bi-save"></i> Salvar Alterações
+                        </button> 
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('memberSearch');
+    const membersSelect = document.getElementById('members');
+    const options = membersSelect.options;
+
+    searchInput.addEventListener('keyup', function() {
+        const filter = searchInput.value.toLowerCase();
+        
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            const username = option.getAttribute('data-username');
+            
+            // Verifica se o termo de busca está no nome de usuário
+            if (username.includes(filter)) {
+                option.style.display = ''; // Mostra
+            } else {
+                option.style.display = 'none'; // Esconde
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

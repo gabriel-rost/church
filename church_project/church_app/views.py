@@ -5,7 +5,7 @@ from django.template import loader
 from .models import Post
 from django.db import transaction
 from .forms import ContentForm
-from .models import Channel, Post, Archive
+from .models import Channel, Post, Archive, User
 from django.contrib.auth.decorators import login_required # Garante que o usuário esteja logado
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.forms import AuthenticationForm
@@ -34,6 +34,10 @@ def post(request, post_id):
 def post_list(request, channel_pk):
     channel = get_object_or_404(Channel, pk=channel_pk)
     posts = channel.posts.all().order_by("-date")
+
+    if request.user not in channel.members.all():
+        return HttpResponse("Você não tem permissão para ver os posts deste canal.", status=403)
+
     return render(request, "church_app/post_list.html", {
         "posts": posts,
         "channel": channel
@@ -54,6 +58,9 @@ def logout_view(request):
 def create_post(request, channel_pk):
     # 1. Obtém o canal (ex: via URL)
     channel = get_object_or_404(Channel, pk=channel_pk)
+
+    if request.user not in channel.members.all():
+        return HttpResponse("Você não tem permissão para postar neste canal.", status=403)
     
     if request.method == 'POST':
         # Instancia o ContentForm com os dados de texto
@@ -277,3 +284,80 @@ def changelog_view(request):
         'markdown_text': markdown_content,
     }
     return render(request, 'changelog.html', context)
+
+@staff_member_required
+def manage_channels(request):
+    channels = Channel.objects.all()
+    return render(request, 'manage_channels.html', {'channels': channels})
+
+@staff_member_required
+def add_channel(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+
+        if name:
+            Channel.objects.create(name=name)
+            return redirect('manage_channels')
+
+    return render(request, 'channel/add_channel.html')
+
+@staff_member_required
+def delete_channel(request, channel_pk):
+    if request.method == 'POST':
+        channel = get_object_or_404(Channel, pk=channel_pk)
+        channel.posts.all().delete()  # Deleta todos os posts associados ao canal
+        channel.delete()
+        return redirect('manage_channels')
+    return HttpResponse("Método não permitido", status=405)
+
+@staff_member_required
+def edit_channel(request, channel_pk):
+    all_users = User.objects.all()
+    channel = get_object_or_404(Channel, pk=channel_pk)
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        members_ids = request.POST.getlist('members')
+        channel.members.set(members_ids)
+        #description = request.POST.get('description', '')
+
+        if name:
+            channel.name = name
+            #channel.description = description
+            channel.save()
+            return redirect('manage_channels')
+
+    context = {
+        'all_users': all_users,
+        'channel': channel
+    }
+    return render(request, 'channel/edit_channel.html', context)
+
+@staff_member_required
+def manage_channel_members(request, channel_pk):
+    channel = get_object_or_404(Channel, pk=channel_pk)
+    
+    # Busca todos os usuários, exceto os que JÁ ESTÃO no canal
+    # (Otimização: use o ORM para filtrar)
+    channel_members_pks = channel.members.values_list('pk', flat=True)
+    non_members = User.objects.exclude(pk__in=channel_members_pks).all()
+
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        action = request.POST.get('action')
+        user_to_manage = get_object_or_404(User, pk=user_id)
+        
+        if action == 'add':
+            channel.members.add(user_to_manage)
+        elif action == 'remove':
+            channel.members.remove(user_to_manage)
+        
+        # Redireciona para evitar re-submissão do formulário
+        return redirect('manage_channel_members', channel_pk=channel_pk)
+
+    context = {
+        'channel': channel,
+        # O Django fornece channel.members.all automaticamente
+        'non_members': non_members,
+    }
+    return render(request, 'channel/manage_channel_members.html', context)
