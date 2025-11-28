@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}Gerenciar Membros do Canal {{ channel.name }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+        <h1 class="h3 mb-0 fw-bold text-primary">👥 Gerenciar Membros: {{ channel.name }}</h1>
+    </div>
+
+    <div class="row g-4">
+        
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white fw-bold">
+                    <i class="bi bi-people-fill me-2"></i> Membros Atuais ({{ channel.members.count }})
+                </div>
+                <div class="card-body p-0">
+                    
+                    <input type="text" id="memberFilter" class="form-control rounded-0" placeholder="Filtrar membros...">
+                    
+                    <ul id="currentMemberList" class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                        {% for user in channel.members.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center" data-username="{{ user.username|lower }}">
+                                <span><i class="bi bi-person-fill me-2"></i> {{ user.username }}</span>
+                                
+                                <form method="post" action="{% url 'manage_channel_members' channel.pk %}" class="m-0 p-0 d-inline-block">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ user.pk }}">
+                                    <input type="hidden" name="action" value="remove">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                            title="Remover {{ user.username }}">
+                                        <i class="bi bi-person-dash"></i> Remover
+                                    </button>
+                                </form>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted text-center py-4">Nenhum membro neste canal.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white fw-bold">
+                    <i class="bi bi-person-plus-fill me-2"></i> Adicionar Usuários
+                </div>
+                <div class="card-body p-0">
+                    
+                    <input type="text" id="nonMemberSearch" class="form-control rounded-0" placeholder="Buscar usuários para adicionar...">
+                    
+                    <ul id="nonMemberList" class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                        {% for user in non_members %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center" data-username="{{ user.username|lower }}">
+                                <span><i class="bi bi-person-plus me-2"></i> {{ user.username }}</span>
+                                
+                                <form method="post" action="{% url 'manage_channel_members' channel.pk %}" class="m-0 p-0 d-inline-block">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ user.pk }}">
+                                    <input type="hidden" name="action" value="add">
+                                    <button type="submit" class="btn btn-sm btn-outline-success" 
+                                            title="Adicionar {{ user.username }}">
+                                        <i class="bi bi-person-plus"></i> Adicionar
+                                    </button>
+                                </form>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted text-center py-4">Todos os usuários estão no canal ou não há mais usuários para listar.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    console.log("Setting up list filters...");
+    function setupListFilter(inputId, listId) {
+        const searchInput = document.getElementById(inputId);
+        console.log("Search input:", searchInput);
+        const list = document.getElementById(listId);
+        if (!searchInput || !list) return;
+
+        const items = list.getElementsByTagName('li');
+
+        searchInput.addEventListener('keyup', function() {
+            const filter = searchInput.value.toLowerCase();
+            console.log("Filtering list with filter:", filter);
+            
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const username = item.getAttribute('data-username');
+                
+                if (username) {
+                    if (username.includes(filter)) {
+                        // Para MOSTRAR: Remove 'd-none' e garante 'd-flex'
+                        item.classList.remove('d-none');
+                        item.classList.add('d-flex'); // Restaura o d-flex para alinhamento
+                        
+                        console.log("Showing item with username:", username);
+                    } else {
+                        // Para ESCONDER: Adiciona 'd-none' (que usa !important)
+                        item.classList.add('d-none');
+                        item.classList.remove('d-flex'); // Remove d-flex para que d-none funcione
+                        
+                        console.log("Hiding item with username:", username);
+                    }
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setupListFilter('memberFilter', 'currentMemberList');
+        setupListFilter('nonMemberSearch', 'nonMemberList');
+    });
+
+function moveUser(userId, username, fromListId, toListId, actionType) {
+        const fromList = document.getElementById(fromListId);
+        const toList = document.getElementById(toListId);
+        const item = fromList.querySelector(`[data-user-id="${userId}"]`);
+        
+        if (!item) return; // Item já foi movido ou não existe
+
+        // 1. Remove o item da lista de origem
+        fromList.removeChild(item);
+
+        // 2. Cria o novo item para a lista de destino
+        const newItem = document.createElement('li');
+        newItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+        newItem.setAttribute('data-user-id', userId);
+        newItem.setAttribute('data-username', username.toLowerCase());
+        
+        // Define o rótulo e o botão de ação (remover ou adicionar de volta)
+        const icon = actionType === 'add' ? 'bi-person-plus' : 'bi-person-dash';
+        const buttonText = actionType === 'add' ? 'Remover' : 'Adicionar';
+        const newAction = actionType === 'add' ? 'remove' : 'add';
+        const buttonClass = actionType === 'add' ? 'btn-outline-danger' : 'btn-outline-success';
+        
+        newItem.innerHTML = `
+            <span><i class="bi ${icon} me-2"></i> ${username}</span>
+            <button type="button" class="btn btn-sm ${buttonClass}" 
+                    onclick="moveUser(${userId}, '${username}', '${toListId}', '${fromListId}', '${newAction}')"
+                    title="${buttonText} ${username}">
+                <i class="bi bi-person-${newAction === 'add' ? 'plus' : 'dash'}"></i> ${buttonText}
+            </button>
+        `;
+        
+        // 3. Adiciona na lista de destino
+        toList.appendChild(newItem);
+    }
+
+</script>
+{% endblock %}

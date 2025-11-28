@@ -34,6 +34,18 @@
             </div>
         </div>
 
+        {% if user.is_authenticated and user.is_staff %}
+        <div>
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-secondary">Gerenciar Canais</h5>
+                    <p class="card-text text-muted small">Administre os canais existentes ou crie novos para a comunidade.</p>
+                    <a href="{% url 'manage_channels' %}" class="btn btn-outline-secondary btn-sm"> &rarr;</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="col-lg-4">
             <div class="card shadow-sm h-100 bg-light">
                 <div class="card-body">

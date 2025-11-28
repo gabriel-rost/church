@@ -18,4 +18,9 @@ urlpatterns = [
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),  # Rota para deletar um post
     path('profile/edit/', views.edit_user_profile, name='edit_user_profile'),  # Rota para editar o perfil do usuário
     path('changelog/', views.changelog_view, name='changelog'),  # Rota para a página de changelog
+    path('manage_channels/', views.manage_channels, name='manage_channels'),  # Rota para gerenciar canais
+    path('channel/add/', views.add_channel, name='channel/add_channel'),  # Rota para adicionar um novo canal
+    path('channel/<int:channel_pk>/delete/', views.delete_channel, name='delete_channel'),  # Rota para deletar um canal
+    path('channel/<int:channel_pk>/edit/', views.edit_channel, name='edit_channel'),  # Rota para editar um canal
+    path('channel/manage_channel_members/<int:channel_pk>/', views.manage_channel_members, name='manage_channel_members'),  # Rota para gerenciar membros do canal
 ]

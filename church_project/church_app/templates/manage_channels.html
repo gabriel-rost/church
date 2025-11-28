@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Manage Channels{% endblock %}
+
+{% block content %}
+<h1>Gerenciar Canais</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Nome do Canal</th>
+            <th>Data de Criação</th>
+            <th>Membros</th>
+            <th>Opções</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for channel in channels %}
+        <tr>
+            <td>{{ channel.name }}</td>
+            <td>{{ channel.creation_date }}</td>
+            <td>{{ channel.members.count }}</td>
+            <td>
+                <a href="{% url 'manage_channel_members' channel.pk %}">Gerenciar Membros</a> |
+                <a href="{% url 'edit_channel' channel.pk %}">Editar</a> |
+                <form action="{% url 'delete_channel' channel.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Tem certeza que deseja deletar este canal? Os posts associados também serão deletados.');">Deletar</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Sem canais disponíveis.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'channel/add_channel' %}">Adicionar Novo Canal</a>
+{% endblock %}
