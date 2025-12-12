@@ -73,36 +73,36 @@ class Content(models.Model):
     def __str__(self):
         return self.text[:50]  # Retorna os primeiros 50 caracteres do texto como representação
 
+class Role(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(blank=True, max_length=300)
+
+    def __str__(self):
+        return self.name
+
 class Channel(models.Model):
     name = models.CharField(max_length=50)
     creation_date = models.DateField(auto_now_add=True)
-    #description = models.TextField(blank=True, max_length=300)
-    #public = models.BooleanField(default=True)
-    #roles = models.ManyToManyField(Role, blank=True, related_name="channels")
+    description = models.TextField(blank=True, max_length=300)
+    public = models.BooleanField(default=True)
+    roles = models.ManyToManyField(Role, blank=True, related_name="channels")
     members = models.ManyToManyField(User, related_name="channels")
 
     def __str__(self):
         return self.name
 
-# class Role(models.Model):
-#     name = models.CharField(max_length=50)
-#     description = models.TextField(blank=True, max_length=300)
+class ChannelMember(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    channel = models.ForeignKey(Channel, on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
 
-#     def __str__(self):
-#         return self.name
+    joined_at = models.DateTimeField(auto_now_add=True)
 
-# class ChannelMember(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     channel = models.ForeignKey(Channel, on_delete=models.CASCADE)
-#     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
+    class Meta:
+        unique_together = ('user', 'channel')  # evita duplicação
 
-#     joined_at = models.DateTimeField(auto_now_add=True)
-
-#     class Meta:
-#         unique_together = ('user', 'channel')  # evita duplicação
-
-#     def __str__(self):
-#         return f"{self.user} em {self.channel} ({self.role})"
+    def __str__(self):
+        return f"{self.user} em {self.channel} ({self.role})"
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
