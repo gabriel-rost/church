@@ -1,6 +1,17 @@
 from django.contrib import admin
 
-# Register your models here.
-from church_app.models import *
-x = [Post, Archive, Comment, Content, Profile, Channel]
-admin.site.register(x)
+from .models import (
+    Post,
+    Archive,
+    Comment,
+    Content,
+    Profile,
+    Channel,
+)
+
+admin.site.register(Post)
+admin.site.register(Archive)
+admin.site.register(Comment)
+admin.site.register(Content)
+admin.site.register(Profile)
+admin.site.register(Channel)

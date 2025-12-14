@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("post_detail/<int:post_id>/", views.post, name="post_detail"),
+    path("post_detail/<int:post_id>/", views.post_detail, name="post_detail"),
     path("login", views.login_view, name="login"),
     path("channel/<int:channel_pk>/new_post/", views.create_post, name="create_post"),
     path("channel/<int:channel_pk>/", views.post_list, name="post_list"), # Lista de posts por canal
@@ -23,4 +23,5 @@ urlpatterns = [
     path('channel/<int:channel_pk>/delete/', views.delete_channel, name='delete_channel'),  # Rota para deletar um canal
     path('channel/<int:channel_pk>/edit/', views.edit_channel, name='edit_channel'),  # Rota para editar um canal
     path('channel/manage_channel_members/<int:channel_pk>/', views.manage_channel_members, name='manage_channel_members'),  # Rota para gerenciar membros do canal
+    path('channel/<int:channel_pk>/feed/', views.channel_feed, name='channel_feed'),  # Rota para o feed do canal
 ]
