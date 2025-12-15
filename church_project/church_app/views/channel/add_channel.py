@@ -6,9 +6,10 @@ from church_app.models import Channel
 def add_channel(request):
     if request.method == 'POST':
         name = request.POST.get('name')
+        description = request.POST.get('description')
 
         if name:
-            Channel.objects.create(name=name)
+            Channel.objects.create(name=name, description=description)
             return redirect('manage_channels')
 
     return render(request, 'channel/add_channel.html')

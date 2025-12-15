@@ -1,10 +1,46 @@
 {% extends "base.html" %}
-{% block title %}Add Channel{% endblock %}
+{% block title %}Adicionar Novo Canal{% endblock %}
+
 {% block content %}
-<form action="{% url 'channel/add_channel' %}" method="post">
-    {% csrf_token %}
-    <label for="name">Channel Name:</label>
-    <input type="text" id="name" name="name" required>
-    <button type="submit">Add Channel</button>
-</form>
+<div class="container my-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Voltar
+        </a>
+        <h1 class="h3 mb-0 fw-bold text-primary">➕ Adicionar Novo Canal</h1>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg p-4">
+                <div class="card-body">
+                    <form action="{% url 'channel/add_channel' %}" method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-semibold">Nome do Canal (Ex: geral, projetos)</label>
+                            <input type="text" id="name" name="name" 
+                                   class="form-control" 
+                                   placeholder="Digite o nome do canal (sem espaços)" 
+                                   required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-semibold">Descrição do Canal</label>
+                            <textarea id="description" name="description" 
+                                      class="form-control" 
+                                      rows="3"
+                                      placeholder="Descreva o propósito deste canal (opcional)."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">
+                            <i class="bi bi-plus-circle me-1"></i> Criar Canal
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

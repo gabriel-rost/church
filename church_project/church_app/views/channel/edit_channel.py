@@ -10,13 +10,11 @@ def edit_channel(request, channel_pk):
 
     if request.method == 'POST':
         name = request.POST.get('name')
-        members_ids = request.POST.getlist('members')
-        channel.members.set(members_ids)
-        #description = request.POST.get('description', '')
+        description = request.POST.get('description')
 
         if name:
             channel.name = name
-            #channel.description = description
+            channel.description = description
             channel.save()
             return redirect('manage_channels')
 

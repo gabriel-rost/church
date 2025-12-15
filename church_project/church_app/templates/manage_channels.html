@@ -1,38 +1,88 @@
 {% extends "base.html" %}
-{% block title %}Manage Channels{% endblock %}
+{% block title %}Gerenciar Canais{% endblock %}
 
 {% block content %}
-<h1>Gerenciar Canais</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Nome do Canal</th>
-            <th>Data de Criação</th>
-            <th>Membros</th>
-            <th>Opções</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for channel in channels %}
-        <tr>
-            <td>{{ channel.name }}</td>
-            <td>{{ channel.creation_date }}</td>
-            <td>{{ channel.members.count }}</td>
-            <td>
-                <a href="{% url 'manage_channel_members' channel.pk %}">Gerenciar Membros</a> |
-                <a href="{% url 'edit_channel' channel.pk %}">Editar</a> |
-                <form action="{% url 'delete_channel' channel.pk %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" onclick="return confirm('Tem certeza que deseja deletar este canal? Os posts associados também serão deletados.');">Deletar</button>
-                </form>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="4">Sem canais disponíveis.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'channel/add_channel' %}">Adicionar Novo Canal</a>
+<div class="container my-5">
+
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+
+        <h1 class="h3 mb-0 fw-bold text-dark">📋 Gerenciar Canais</h1>
+        
+        <a href="{% url 'channel/add_channel' %}" class="btn btn-primary fw-medium">
+            <i class="bi bi-plus-circle me-1"></i> Adicionar Novo Canal
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col" class="text-center">Criado em</th>
+                            <th scope="col" class="text-center">Membros</th>
+                            <th scope="col" class="text-end">Opções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for channel in channels %}
+                        <tr>
+                            <td class="fw-medium text-primary">
+                                #{{ channel.name }}
+                            </td>
+                            <td>
+                                {{ channel.description|truncatechars:50 }}
+                            </td>
+                            <td class="small text-center text-muted">
+                                {{ channel.creation_date|date:"d/m/Y" }}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-people-fill"></i> {{ channel.members.count }}
+                                </span>
+                            </td>
+                            <td class="text-end text-nowrap">
+                                
+                                <a href="{% url 'manage_channel_members' channel.pk %}" class="btn btn-sm btn-outline-info me-2" title="Gerenciar Membros">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                    <span class="d-none d-md-inline"> Membros</span>
+                                </a>
+                                
+                                <a href="{% url 'edit_channel' channel.pk %}" class="btn btn-sm btn-outline-secondary me-2" title="Editar Canal">
+                                    <i class="bi bi-pencil"></i>
+                                    <span class="d-none d-md-inline"> Editar</span>
+                                </a>
+                                
+                                <form action="{% url 'delete_channel' channel.pk %}" method="post" class="d-inline-block">
+                                    {% csrf_token %}
+                                    <button type="submit" 
+                                            class="btn btn-sm btn-outline-danger" 
+                                            onclick="return confirm('Tem certeza que deseja deletar o canal #{{ channel.name }}? Esta ação é irreversível.');"
+                                            title="Deletar Canal">
+                                        <i class="bi bi-trash"></i>
+                                        <span class="d-none d-md-inline"> Deletar</span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <i class="bi bi-info-circle me-1"></i> Sem canais disponíveis para gerenciamento.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+</div>
 {% endblock %}
