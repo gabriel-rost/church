@@ -24,27 +24,14 @@
                                    value="{{ channel.name }}" 
                                    class="form-control" required>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label for="memberSearch" class="form-label fw-semibold">Gerenciar Membros</label>
-                            
-                            <input type="text" id="memberSearch" class="form-control mb-2" 
-                                   placeholder="Pesquisar usuários por nome...">
-                            
-                            <select id="members" name="members" multiple 
-                                    class="form-select" size="10" required>
-                                {% for user in all_users %}
-                                    <option value="{{ user.pk }}" 
-                                            data-username="{{ user.username|lower }}" 
-                                            {% if user in channel.members.all %}selected{% endif %}>
-                                        {{ user.username }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <div class="form-text">
-                                Segure **Ctrl** (Windows/Linux) ou **Cmd** (Mac) para selecionar múltiplos membros.
-                            </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label fw-semibold">Descrição do Canal</label>
+                            <input type="text" id="description" name="description" 
+                                   value="{{ channel.description }}" 
+                                   class="form-control">
                         </div>
+
 
                         <button type="submit" class="btn btn-primary w-100 fw-bold">
                             <i class="bi bi-save"></i> Salvar Alterações
@@ -55,28 +42,4 @@
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('memberSearch');
-    const membersSelect = document.getElementById('members');
-    const options = membersSelect.options;
-
-    searchInput.addEventListener('keyup', function() {
-        const filter = searchInput.value.toLowerCase();
-        
-        for (let i = 0; i < options.length; i++) {
-            const option = options[i];
-            const username = option.getAttribute('data-username');
-            
-            // Verifica se o termo de busca está no nome de usuário
-            if (username.includes(filter)) {
-                option.style.display = ''; // Mostra
-            } else {
-                option.style.display = 'none'; // Esconde
-            }
-        }
-    });
-});
-</script>
 {% endblock %}

@@ -70,6 +70,17 @@
         Ver detalhes e comentários
       </a>
     </div>
+
+    {% if user.is_authenticated and user.is_staff %}
+        <div class="mt-2 d-block">
+            <a href="{% url 'featured_post' post.id %}" 
+              class="btn btn-sm btn-light text-secondary fw-medium border"
+              title="Define esta publicação como o Destaque da Semana na Home.">
+                <i class="bi bi-star me-1"></i> Marcar como Destaque
+            </a>
+        </div>
+    {% endif %}
+
   </div>
   {% empty %}
   <p>Nenhum post disponível.</p>
