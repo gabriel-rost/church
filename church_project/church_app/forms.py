@@ -48,16 +48,25 @@ class SignUpForm(UserCreationForm):
         return email
     
 class ProfileForm(forms.ModelForm):
+    avatar_upload = forms.FileField(required=False)
+
     class Meta:
         model = Profile
-        fields = ['avatar', 'birth_date', 'bio', 'phone', 'location']
-        widgets = {
-            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
-            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'location': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+        fields = ["bio", "phone", "location", "birth_date"]
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+
+        avatar_file = self.cleaned_data.get("avatar_upload")
+        if avatar_file:
+            archive = Archive.objects.create(file=avatar_file)
+            profile.avatar = archive
+
+        if commit:
+            profile.save()
+
+        return profile
+
 
 class UserForm(forms.ModelForm):
     class Meta:
