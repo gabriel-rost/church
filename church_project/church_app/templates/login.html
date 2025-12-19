@@ -4,11 +4,13 @@
 <div class="container d-flex justify-content-center mt-5">
     <div class="card shadow-lg p-4" style="max-width: 450px; width: 100%;">
         <div class="card-body">
-            <h2 class="mb-4 text-center fw-bold text-primary">👋 Fazer Login</h2>
+
+            <h2 class="mb-4 text-center fw-bold text-primary">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Fazer Login
+            </h2>
 
             {% if form.non_field_errors %}
                 <div class="alert alert-danger text-center" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i> 
                     {% for error in form.non_field_errors %}
                         {{ error }}
                     {% endfor %}
@@ -29,16 +31,20 @@
 
             <form method="post" action="{% url 'login' %}">
                 {% csrf_token %}
-                
+
+                <!-- Usuário -->
                 <div class="mb-3">
-                    <label for="id_username" class="form-label fw-semibold">Usuário</label>
-                    <input type="text" 
-                           name="{{ form.username.name }}" 
-                           id="id_username" 
-                           class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                    <label for="id_username" class="form-label fw-semibold">
+                        Usuário
+                    </label>
+                    <input type="text"
+                           name="{{ form.username.name }}"
+                           id="id_username"
+                           class="form-control {% if form.username.errors %}is-invalid{% endif %}"
                            placeholder="Seu nome de usuário"
-                           value="{{ form.username.value|default:'' }}" 
+                           value="{{ form.username.value|default:'' }}"
                            required>
+
                     {% if form.username.errors %}
                         <div class="invalid-feedback d-block small mt-1">
                             {% for error in form.username.errors %}
@@ -48,33 +54,68 @@
                     {% endif %}
                 </div>
 
+                <!-- Senha -->
                 <div class="mb-4">
-                    <label for="id_password" class="form-label fw-semibold">Senha</label>
-                    <input type="password" 
-                           name="{{ form.password.name }}" 
-                           id="id_password" 
-                           class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
-                           placeholder="Sua senha"
-                           required>
+                    <label for="id_password" class="form-label fw-semibold">
+                        Senha
+                    </label>
+
+                    <div class="input-group">
+                        <input type="password"
+                               name="{{ form.password.name }}"
+                               id="id_password"
+                               class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                               placeholder="Sua senha"
+                               required>
+
+                        <button type="button"
+                                class="btn btn-outline-secondary toggle-password"
+                                data-target="id_password"
+                                aria-label="Mostrar senha">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+
                     {% if form.password.errors %}
                         <div class="invalid-feedback d-block small mt-1">
-                             {% for error in form.password.errors %}
+                            {% for error in form.password.errors %}
                                 {{ error }}
                             {% endfor %}
                         </div>
                     {% endif %}
                 </div>
-                
+
                 <input type="hidden" name="next" value="{{ next }}">
-                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mb-3">Entrar</button>
+
+                <button type="submit"
+                        class="btn btn-primary w-100 fw-bold py-2 mb-3">
+                    Entrar
+                </button>
             </form>
-            
+
             <div class="text-center mt-3">
                 <p class="text-muted mb-0">Não tem uma conta?</p>
-                <a href="{% url 'signup' %}" class="text-decoration-none fw-semibold">Crie sua conta aqui!</a>
+                <a href="{% url 'signup' %}" class="text-decoration-none fw-semibold">
+                    Crie sua conta aqui!
+                </a>
             </div>
 
         </div>
     </div>
 </div>
+
+<script>
+document.querySelectorAll(".toggle-password").forEach(button => {
+    button.addEventListener("click", () => {
+        const input = document.getElementById(button.dataset.target);
+        const icon = button.querySelector("i");
+
+        const isPassword = input.type === "password";
+        input.type = isPassword ? "text" : "password";
+
+        icon.classList.toggle("bi-eye");
+        icon.classList.toggle("bi-eye-slash");
+    });
+});
+</script>
 {% endblock %}
