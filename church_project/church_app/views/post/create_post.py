@@ -45,7 +45,7 @@ def create_post(request, channel_pk):
             content.attachments.set(archive_objects) 
 
             # Sucesso! Redireciona para a lista de posts do canal
-            return redirect('post_list', d=channel.pk)
+            return redirect('post_list', channel_pk=channel.pk)
 
     else:
         # Requisição GET: Exibe o formulário vazio
