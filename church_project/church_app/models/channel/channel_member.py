@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 
 class ChannelMember(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -10,7 +11,7 @@ class ChannelMember(models.Model):
     )
 
     role = models.ForeignKey(
-        "church_app.Role",
+        Group,
         on_delete=models.SET_NULL,
         null=True,
         blank=True
