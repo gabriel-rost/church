@@ -261,3 +261,5 @@ STORAGES = {
         "BACKEND": "church_site.storage_backends.R2StaticStorage",
     },
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
