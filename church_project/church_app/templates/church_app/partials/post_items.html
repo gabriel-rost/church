@@ -1,0 +1,71 @@
+  {% for post in posts %}
+  <div class="p-3 border-bottom post-tweet"> 
+    
+    <div class="d-flex align-items-baseline mb-1">
+      <i class="bi bi-person-circle fs-6 me-2 text-secondary"></i>
+      
+      <h6 class="mb-0 me-2 fw-bold">{{ post.user.username }}</h6>
+      
+      <small class="text-muted">
+        · {{ post.date|date:"d/m/Y H:i" }}
+      </small>
+    </div>
+    
+    {% if post.content %}
+
+    {% if post.content.title %}
+      <h6 class="fw-bold text-dark">{{ post.content.title }}</h6>
+    {% endif %}
+
+    <p class="mb-2 text-break">{{ post.content.text }}</p>
+
+    {% if post.content.images.all or post.content.attachments.all %}
+    <div class="mt-2">
+      
+      {% for image in post.content.images.all %}
+      <img src="{{ image.ref }}" class="img-fluid w-100 rounded-3 mb-2" alt="Imagem do Post">
+      {% endfor %}
+      
+      {% for attachment in post.content.attachments.all %}
+      {% with attachment.file.url|lower as f %}
+        
+        {% if ".jpg" in f or ".jpeg" in f or ".png" in f or ".gif" in f %}
+          <div class="text-center my-2">
+            <img src="{{ attachment.file.url }}" alt="Anexo de Imagem" class="img-fluid rounded-3" style="max-height: 400px; max-width: 100%;">
+          </div>
+        
+        {% else %}
+        <div class="d-flex align-items-center p-2 mb-2 border rounded-3 bg-light">
+          <i class="bi bi-file-earmark-arrow-down fs-6 me-2 text-primary"></i>
+          <a href="{{ attachment.file.url }}" target="_blank" class="text-decoration-none text-dark small">
+            📎 {{ attachment.file.name|cut:"archives/" }}
+          </a>
+        </div>
+        {% endif %}
+      {% endwith %}
+      {% endfor %}
+      
+    </div>
+    {% endif %}
+
+    {% endif %}
+    <div class="mt-2">
+      <a href="{% url 'post_detail' post.id %}" class="text-primary small text-decoration-none fw-medium">
+        Ver detalhes e comentários
+      </a>
+    </div>
+
+    {% if user.is_authenticated and user.is_staff %}
+        <div class="mt-2 d-block">
+            <a href="{% url 'featured_post' post.id %}" 
+              class="btn btn-sm btn-light text-secondary fw-medium border"
+              title="Define esta publicação como o Destaque da Semana na Home.">
+                <i class="bi bi-star me-1"></i> Marcar como Destaque
+            </a>
+        </div>
+    {% endif %}
+
+  </div>
+  {% empty %}
+  <p>Nenhum post disponível.</p>
+  {% endfor %}

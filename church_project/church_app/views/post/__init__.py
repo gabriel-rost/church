@@ -6,3 +6,4 @@ from .post_detail import post_detail
 from .post_list import post_list
 from .add_comment import add_comment
 from .add_featured_post import add_featured_post
+from .infinite_scroll import post_list as infinite_scroll_post_list

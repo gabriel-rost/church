@@ -10,6 +10,6 @@ def delete_post(request, post_id):
     if request.method == 'POST' and request.user == post.user:
         channel_pk = post.channel.pk
         post.delete()
-        return redirect('post_list', channel_pk=channel_pk)
+        return redirect('infinite_post_list', channel_pk=channel_pk)
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

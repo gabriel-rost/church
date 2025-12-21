@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Voltar para a página inicial
+        </a>
+    
+        <a href="{% url 'create_post' channel_pk=channel.id %}" class="btn btn-primary shadow-sm">
+        <i class="bi bi-pencil"></i> Criar Novo Post
+        </a>
+    </div> 
+
+  <h1 class="mb-4">Posts Recentes</h1>
+
+  <!-- Container dos posts -->
+  <div id="post-container">
+    {% include "church_app/partials/post_items.html" %}
+  </div>
+
+  <!-- Loading -->
+  <div id="loading" class="text-center my-4 d-none">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Carregando...</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let page = 2;
+let loading = false;
+let hasNext = true;
+
+/**
+ * Verifica se a página já possui scroll
+ */
+function pageIsScrollable() {
+  return document.body.scrollHeight > window.innerHeight;
+}
+
+/**
+ * Carrega mais posts (infinite scroll)
+ */
+function loadMorePosts() {
+  if (loading || !hasNext) return;
+
+  loading = true;
+  document.getElementById("loading").classList.remove("d-none");
+
+  fetch(`?page=${page}`, {
+    headers: {
+      "X-Requested-With": "XMLHttpRequest"
+    }
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Insere os novos posts
+      document
+        .getElementById("post-container")
+        .insertAdjacentHTML("beforeend", data.html);
+
+      hasNext = data.has_next;
+      page++;
+      loading = false;
+      document.getElementById("loading").classList.add("d-none");
+
+      // Se ainda não existir scroll, tenta carregar mais automaticamente
+      if (hasNext && !pageIsScrollable()) {
+        loadMorePosts();
+      }
+    })
+    .catch(() => {
+      loading = false;
+      document.getElementById("loading").classList.add("d-none");
+    });
+}
+
+/**
+ * Dispara ao rolar a página
+ */
+window.addEventListener("scroll", () => {
+  const nearBottom =
+    window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
+
+  if (nearBottom) {
+    loadMorePosts();
+  }
+});
+
+/**
+ * Disparo inicial:
+ * Se a lista inicial for pequena, carrega mais automaticamente
+ */
+document.addEventListener("DOMContentLoaded", () => {
+  if (hasNext && !pageIsScrollable()) {
+    loadMorePosts();
+  }
+});
+</script>
+
+{% endblock %}

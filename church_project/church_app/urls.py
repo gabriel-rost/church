@@ -25,4 +25,5 @@ urlpatterns = [
     path('channel/manage_channel_members/<int:channel_pk>/', views.manage_channel_members, name='manage_channel_members'),  # Rota para gerenciar membros do canal
     path('channel/<int:channel_pk>/feed/', views.channel_feed, name='channel_feed'),  # Rota para o feed do canal
     path('featured_post/<int:post_id>/', views.add_featured_post, name='featured_post'),  # Rota para adicionar post em destaque
+    path('channel/<int:channel_pk>/posts/', views.infinite_scroll_post_list, name='infinite_post_list'),  # Rota para lista de posts com infinite scroll
 ]
