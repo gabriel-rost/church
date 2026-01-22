@@ -25,10 +25,8 @@ def post_list(request, channel_pk, page_size=5):
     posts_qs = (
         channel.posts
         .select_related("user", "content")
-        .prefetch_related(
-            "content__attachments"
-        )
-        .order_by("-date")
+        .prefetch_related("content__attachments")
+        .order_by("-date", "-pk")  # Adicione -pk aqui para manter a ordem fixa
     )
 
     paginator = Paginator(posts_qs, page_size)  # 5 posts por requisição

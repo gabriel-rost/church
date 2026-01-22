@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: church_db_dev
+    environment:
+      POSTGRES_DB: church
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_dev_data:
