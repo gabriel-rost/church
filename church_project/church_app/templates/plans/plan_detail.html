@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5 pb-5">
+
+    <div class="card border-0 shadow-sm mb-4"
+        style="border-radius: 20px; background: linear-gradient(135deg, #0d6efd 0%, #0045ad 100%);">
+        <div class="card-body p-4 text-white text-center">
+            <h2 class="fw-bold mb-1">{{ plan.title }}</h2>
+            <p class="opacity-75 mb-3">{{ plan.description }}</p>
+
+            <div class="bg-white bg-opacity-25 rounded-pill p-1" style="height: 12px;">
+                <div class="bg-white rounded-pill h-100" style="width: {{ progress_percentage }}%; transition: 0.5s;">
+                </div>
+            </div>
+            <small class="d-block mt-2 fw-semibold">{{ progress_percentage }}% concluído</small>
+        </div>
+    </div>
+
+    {% if user.is_staff %}
+    <div class="d-grid mb-4">
+        <a href="{% url 'admin_add_task' plan.id %}" class="btn btn-dark rounded-pill py-2 fw-bold">
+            <i class="bi bi-plus-circle me-2"></i> Lançar Nova Leitura
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="accordion accordion-flush shadow-sm rounded-4 overflow-hidden" id="accordionPlan">
+        {% for week, tasks in weeks.items %}
+        <div class="accordion-item border-0">
+            <div class="d-flex align-items-center bg-white border-bottom">
+                <h2 class="accordion-header flex-grow-1" id="heading{{ week }}">
+                    <button
+                        class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-bold py-3 shadow-none"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#week{{ week }}">
+                        <i class="bi bi-calendar-range me-2 text-primary"></i> Semana {{ week }}
+                    </button>
+                </h2>
+
+                {% if user.is_staff %}
+                <button type="button" class="btn btn-link text-danger me-3 py-0" data-bs-toggle="modal"
+                    data-bs-target="#deleteWeekModal{{ week }}">
+                    <i class="bi bi-trash-fill fs-5"></i>
+                </button>
+                {% endif %}
+            </div>
+
+            <div id="week{{ week }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                data-bs-parent="#accordionPlan">
+                <div class="accordion-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for task in tasks %}
+                        <div
+                            class="list-group-item d-flex align-items-center justify-content-between py-3 border-start border-4 {% if task.id in user_completed_ids %}border-success{% else %}border-light{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3 ps-2">
+                                    {% if task.id in user_completed_ids %}
+                                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                                    {% else %}
+                                    <i class="bi bi-circle text-muted fs-4"></i>
+                                    {% endif %}
+                                </div>
+
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Dia {{ task.day_number }}</h6>
+                                    <small class="text-muted">{{ task.chapter_summary }}</small>
+                                </div>
+                            </div>
+
+
+
+                            <div class="pe-2">
+                                <a href="{% url 'read_chapter' task.chapters.first.book.id task.chapters.first.number %}"
+                                    class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
+                                    {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
+                                </a>
+                            </div>
+
+                            {% if user.is_staff %}
+                            <form action="{% url 'delete_task' task.id %}" method="post" class="d-inline ms-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-danger p-0" title="Apagar esta leitura">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if user.is_staff %}
+        <div class="modal fade" id="deleteWeekModal{{ week }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content" style="border-radius: 20px;">
+                    <div class="modal-body p-4 text-center">
+                        <i class="bi bi-exclamation-octagon text-danger fs-1 mb-3"></i>
+                        <h5 class="fw-bold mb-2">Apagar Semana {{ week }}?</h5>
+                        <p class="text-muted small">Isso removerá todas as leituras lançadas para esta semana. Esta ação
+                            não pode ser desfeita.</p>
+                        <form action="{% url 'delete_week' plan.id week %}" method="post">
+                            {% csrf_token %}
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-danger rounded-pill fw-bold">Confirmar</button>
+                                <button type="button" class="btn btn-light rounded-pill text-muted"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% empty %}
+        <div class="p-5 text-center">
+            <i class="bi bi-journal-x fs-1 text-muted opacity-25"></i>
+            <p class="text-muted mt-3">Nenhuma leitura lançada para este plano ainda.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Estilos para manter a UI limpa */
+    .accordion-button:not(.collapsed) {
+        background-color: transparent;
+        color: #0d6efd;
+    }
+
+    .accordion-button::after {
+        margin-left: 0;
+    }
+
+    .list-group-item:hover {
+        background-color: #fbfbfb;
+    }
+</style>
+{% endblock %}

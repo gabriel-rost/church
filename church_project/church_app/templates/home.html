@@ -1,33 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container my-4">
-    
+
     <div class="p-4 p-md-5 mb-4 text-white bg-primary rounded-3 shadow-sm">
         <div class="col-md-10 px-0">
             {% if user.is_authenticated %}
-                <h1 class="display-5 fw-bold">Bem-vindo(a) de volta, {{ user.username }}!</h1>
-                <p class="lead my-3">Confira as últimas novidades e o que está acontecendo na nossa comunidade hoje.</p>
-                <a href="{% url 'profile' user.username %}" class="btn btn-light btn-sm mt-2">Acessar Meu Perfil &rarr;</a>
+            <h1 class="display-5 fw-bold">Bem-vindo(a) de volta, {{ user.username }}!</h1>
+            <p class="lead my-3">Confira as últimas novidades e o que está acontecendo na nossa comunidade hoje.</p>
+            <a href="{% url 'profile' user.username %}" class="btn btn-light btn-sm mt-2">Acessar Meu Perfil &rarr;</a>
             {% else %}
-                <h1 class="display-5 fw-bold">Bem-vindo(a) ao Church App</h1>
-                <p class="lead my-3">Conecte-se com a comunidade, acompanhe eventos e leia posts inspiradores.</p>
-                <a href="{% url 'login' %}" class="btn btn-light btn-sm mt-2">Fazer Login ou Cadastrar-se &rarr;</a>
+            <h1 class="display-5 fw-bold">Bem-vindo(a) ao Church App</h1>
+            <p class="lead my-3">Conecte-se com a comunidade, acompanhe eventos e leia posts inspiradores.</p>
+            <a href="{% url 'login' %}" class="btn btn-light btn-sm mt-2">Fazer Login ou Cadastrar-se &rarr;</a>
             {% endif %}
         </div>
     </div>
-    
+
     <div class="row g-4">
-        
+
         <div class="col-lg-4">
             <div class="card shadow-sm h-100">
-                <div class="card-body d-flex flex-column"> 
+                <div class="card-body d-flex flex-column">
                     <div>
                         <h5 class="card-title fw-bold text-primary">📚 Navegar por Tópicos</h5>
                         <p class="card-text text-muted small">Acesse feeds específicos de conteúdo.</p>
                     </div>
-                    <div class="d-flex flex-wrap gap-2 mt-auto"> 
+                    <div class="d-flex flex-wrap gap-2 mt-auto">
                         {% for channel in channels %}
-                        <a href="{% url 'infinite_post_list' channel_pk=channel.id %}" class="btn btn-outline-primary btn-sm rounded-pill">
+                        <a href="{% url 'infinite_post_list' channel_pk=channel.id %}"
+                            class="btn btn-outline-primary btn-sm rounded-pill">
                             #{{ channel.name }}
                         </a>
                         {% endfor %}
@@ -40,15 +41,15 @@
         <div class="col-12 col-md-6 col-lg-4">
             <div class="card shadow-sm h-100 border-primary border-opacity-50">
                 <div class="card-body d-flex flex-column justify-content-between">
-                    
+
                     <div>
-                        <i class="bi bi-gear-fill text-primary display-6 mb-3"></i> 
+                        <i class="bi bi-gear-fill text-primary display-6 mb-3"></i>
                         <h5 class="card-title fw-bold text-primary">Gerenciamento de Canais</h5>
                         <p class="card-text text-muted small mt-2">
                             Crie novos canais, edite nomes, ou gerencie membros e permissões da comunidade.
                         </p>
                     </div>
-                    
+
                     <div class="mt-3">
                         <a href="{% url 'manage_channels' %}" class="btn btn-outline-primary w-100 fw-medium">
                             Acessar Painel Admin <i class="bi bi-arrow-right-short"></i>
@@ -59,7 +60,7 @@
         </div>
         {% endif %}
 
-        <div class="col-lg-4">
+        <!-- <div class="col-lg-4">
             <div class="card shadow-sm h-100 bg-light">
                 <div class="card-body d-flex flex-column justify-content-between">
                     <div>
@@ -74,37 +75,70 @@
                     <a href="#" class="card-link mt-auto">Ver Calendário Completo</a>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <div class="col-lg-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    
+            <div class="card border-0 shadow-sm h-100 overflow-hidden"
+                style="border-radius: 20px; background: url('https://img.freepik.com/premium-photo/old-paper-texture-with-flecked-distressed-look-warm-parchment-vibe_380164-162804.jpg') center/cover;">
+
+                <div class="card-body d-flex flex-column justify-content-between p-4 bg-white bg-opacity-75"
+                    style="backdrop-filter: blur(1px);">
+
                     <div>
-                        <h5 class="card-title fw-bold text-danger">🔥 Destaque da Semana</h5>
-                        <p class="card-text small text-muted">A mensagem mais recente ou importante.</p>
-                        
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-danger rounded-pill px-3 py-2 fw-bold small shadow-sm">
+                                <i class="bi bi-fire me-1"></i> Destaque da Semana
+                            </span>
+                        </div>
+
                         {% with featured_post=featured_posts.0 %}
-                            {% if featured_post %}
-                                <p class="fw-medium mb-1">{{ featured_post.post.content.title|truncatechars:70 }}</p>
-                                <p class="small text-muted mb-2 flex-grow-1">
-                                    {{ featured_post.post.content.text|truncatechars:80 }}
-                                </p>
-                                <p class="small text-muted mb-2">Por {{ featured_post.post.user.username }}</p>
-                                <a href="{% url 'post_detail' featured_post.post.id %}" class="card-link text-danger">Ler Post Completo &rarr;</a>
-                            {% else %}
-                                <p class="card-text">Nenhum destaque disponível no momento.</p>
-                            {% endif %}
+                        {% if featured_post %}
+                        <h5 class="fw-bold text-dark mt-3 mb-1" style="font-family: 'Georgia', serif;">
+                            {{ featured_post.post.content.title|truncatechars:60 }}
+                        </h5>
+
+                        <p class="text-muted small mb-3">
+                            por <span class="fw-bold">{{ featured_post.post.user.username }}</span> • 4 min de leitura
+                        </p>
+
+                        <p class="card-text text-dark flex-grow-1 mb-4" style="font-style: italic; line-height: 1.5;">
+                            "{{ featured_post.post.content.text|truncatechars:120 }}"
+                        </p>
+
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'post_detail' featured_post.post.id %}"
+                                class="btn btn-dark rounded-pill px-4 fw-bold shadow-sm">
+                                Ler agora
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-journal-x fs-1 text-muted opacity-50"></i>
+                            <p class="card-text text-muted mt-2">Nenhum destaque disponível.</p>
+                        </div>
+                        {% endif %}
                         {% endwith %}
-                        
                     </div>
-                    
-                    <a href="#" class="card-link mt-auto">Ver Feed Completo</a>
+
+                    {% if posts %}
+                    <div class="mt-4 pt-3 border-top border-dark border-opacity-10 text-center">
+                        <a href="{% url 'infinite_post_list' channel_pk=1 %}"
+                            class="text-decoration-none text-dark small fw-bold">
+                            Ver Feed Completo <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {% if user.is_staff %}
+                    <div class="mt-4 pt-3 border-top border-dark border-opacity-10 text-center">
+                        <a href="" class="text-decoration-none text-danger small fw-bold">Remover Destaque</a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <!-- <div class="col-lg-4">
             <div class="card shadow-sm h-100">
                 <div class="card-body d-flex flex-column justify-content-between">
                     
@@ -136,55 +170,55 @@
                     <a href="{% url 'changelog' %}" class="card-link mt-auto">Ver Página de Atualizações</a>
                 </div>
             </div>
+        </div> -->
+
+    </div>
+</div>
+
+<h2 class="mt-5 mb-3 text-secondary">Últimas Publicações do Feed</h2>
+<div class="row g-4">
+
+    {% for post in posts %}
+
+    <div class="col-12 col-md-6 col-lg-4">
+
+        <div class="card shadow-sm h-100 border-0">
+            <div class="card-body d-flex flex-column">
+
+                <h5 class="fw-bold mb-3 text-dark">
+                    {{ post.content.title|truncatechars:50 }}
+                </h5>
+
+                <p class="card-text small text-muted flex-grow-1">
+                    {{ post.content.text|truncatechars:120 }}
+                </p>
+
+                <div class="mt-3 pt-3 border-top d-flex justify-content-between align-items-center">
+
+                    <div class="text-start">
+                        <span class="badge bg-light text-primary border border-primary">
+                            <i class="bi bi-tag-fill me-1"></i>
+                            <a href="{% url 'infinite_post_list' channel_pk=post.channel.id %}"
+                                class="text-decoration-none text-primary">
+                                #{{ post.channel.name }}
+                            </a>
+                        </span>
+                    </div>
+
+                    <a href="{% url 'post_detail' post.id %}" class="btn btn-sm btn-outline-primary ms-auto">
+                        Ler &rarr;
+                    </a>
+                </div>
+            </div>
         </div>
 
     </div>
-    </div>
-    
-    <h2 class="mt-5 mb-3 text-secondary">Últimas Publicações do Feed</h2>
-<div class="row g-4">
-    
-    {% for post in posts %}
-    
-        <div class="col-12 col-md-6 col-lg-4">
-            
-            <div class="card shadow-sm h-100 border-0">
-                <div class="card-body d-flex flex-column">
-                    
-                    <h5 class="fw-bold mb-3 text-dark">
-                        {{ post.content.title|truncatechars:50 }}
-                    </h5>
-                    
-                    <p class="card-text small text-muted flex-grow-1">
-                        {{ post.content.text|truncatechars:120 }}
-                    </p>
-                    
-                    <div class="mt-3 pt-3 border-top d-flex justify-content-between align-items-center">
-                        
-                        <div class="text-start">
-                            <span class="badge bg-light text-primary border border-primary">
-                                <i class="bi bi-tag-fill me-1"></i> 
-                                <a href="{% url 'infinite_post_list' channel_pk=post.channel.id %}" class="text-decoration-none text-primary">
-                                    #{{ post.channel.name }}
-                                </a>
-                            </span>
-                        </div>
-                        
-                        <a href="{% url 'post_detail' post.id %}"
-                           class="btn btn-sm btn-outline-primary ms-auto">
-                            Ler &rarr;
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
     {% empty %}
-        <div class="col-12">
-            <p class="text-center text-muted p-5 border rounded bg-light">
-                Nenhum post disponível para esta seção.
-            </p>
-        </div>
+    <div class="col-12">
+        <p class="text-center text-muted p-5 border rounded bg-light">
+            Nenhum post disponível para esta seção.
+        </p>
+    </div>
     {% endfor %}
 </div>
 </div>

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">{{ book.name }} {{ chapter.number }}</h2>
+        <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#selecionarLivro">
+            Mudar Livro <i class="bi bi-chevron-down"></i>
+        </button>
+    </div>
+
+    <div class="card shadow-sm border-0 p-4" style="border-radius: 15px;">
+        <div class="bible-text" style="font-size: 1.1rem; line-height: 1.8;">
+            {% for v in verses %}
+                <span class="text-muted small fw-bold me-1">{{ v.number }}</span>
+                <span class="me-2">{{ v.text }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+        <a href="#" class="btn btn-light shadow-sm"> <i class="bi bi-arrow-left"></i> Anterior</a>
+        <a href="#" class="btn btn-light shadow-sm">Próximo <i class="bi bi-arrow-right"></i></a>
+    </div>
+</div>
+{% endblock %}
