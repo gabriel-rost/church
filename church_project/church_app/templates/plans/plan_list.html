@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">Planos de Leitura</h2>
+        {% if user.is_staff %}
+        <a href="{% url 'create_plan' %}" class="btn btn-primary rounded-pill">
+            <i class="bi bi-plus-lg"></i> Novo Plano
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="row g-4">
+        {% for plan in plans %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 position-relative" style="border-radius: 20px; transition: 0.3s;">
+
+                {% if user.is_staff %}
+                <div class="position-absolute top-0 end-0 m-3" style="z-index: 10;">
+                    <button type="button" class="btn btn-danger btn-sm rounded-circle shadow" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal{{ plan.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+                {% endif %}
+
+                {% if plan.cover_image %}
+                <img src="{{ plan.cover_image.url }}" class="card-img-top"
+                    style="border-radius: 20px 20px 0 0; height: 180px; object-fit: cover;">
+                {% else %}
+                <div class="bg-primary bg-gradient"
+                    style="height: 180px; border-radius: 20px 20px 0 0; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-book-half text-white fs-1"></i>
+                </div>
+                {% endif %}
+
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">{{ plan.title }}</h5>
+                    <p class="text-muted small mb-4">{{ plan.description|truncatechars:100 }}</p>
+                    <a href="{% url 'plan_detail' plan.id %}" class="btn btn-outline-primary w-100 rounded-pill fw-bold">Ver Plano</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="deleteModal{{ plan.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 20px;">
+                    <div class="modal-body p-4 text-center">
+                        <i class="bi bi-exclamation-triangle text-danger fs-1 mb-3"></i>
+                        <h5 class="fw-bold">Apagar Plano?</h5>
+                        <p class="text-muted">Tem certeza que deseja apagar <strong>"{{ plan.title }}"</strong>? Todas
+                            as leituras e progressos associados serão excluídos.</p>
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="button" class="btn btn-light w-100 rounded-pill fw-bold"
+                                data-bs-dismiss="modal">Cancelar</button>
+                            <form action="{% url 'delete_plan' plan.id %}" method="post" class="w-100">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger w-100 rounded-pill fw-bold">Confirmar
+                                    Exclusão</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% empty %}
+        <div class="text-center p-5">
+            <p class="text-muted">Ainda não existem planos de leitura disponíveis.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- {% block pagination %}
+    <nav class="pagination-footer">
+        <ul class="pagination justify-content-center mb-2 mt-2">
+            {% for page_number in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_number == page_obj.number %}active{% endif %}">
+                    <a class="page-link"
+                    href="{% url 'plan_list' page_number %}">
+                        {{ page_number }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    {% endblock %} -->
+
+
+
+</div>
+{% endblock %}
