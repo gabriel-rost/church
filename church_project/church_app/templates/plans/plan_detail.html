@@ -70,10 +70,16 @@
 
 
                             <div class="pe-2">
-                                <a href="{% url 'read_chapter' task.chapters.first.book.id task.chapters.first.number %}"
-                                    class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
-                                    {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
-                                </a>
+                                {% with first_chapter=task.chapters.first %}
+                                    {% if first_chapter %}
+                                        <a href="{% url 'read_chapter' first_chapter.book.id first_chapter.number %}" 
+                                        class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
+                                        {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
+                                        </a>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Sem capítulos</span>
+                                    {% endif %}
+                                {% endwith %}
                             </div>
 
                             {% if user.is_staff %}
