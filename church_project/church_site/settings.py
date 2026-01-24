@@ -232,7 +232,7 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 
 # --- Configuração Moderna de Storages (Django 4.2+) ---
 
-STATIC_URL = "https://pub-ba1a1273b7274c32ada11ba5a4254e40.r2.dev/static/"
+STATIC_URL = config('STATIC_URL')
 IS_BUILD = os.environ.get("DJANGO_DOCKER_BUILD") == "1"
 
 if IS_BUILD:
@@ -265,4 +265,16 @@ STORAGES = {
     },
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email Backend - Durante o desenvolvimento, use o console backend
+if ENV == "local":
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Configurações de E-mail para Produção
+if ENV == "production":
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+    DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
