@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'storages',
+    'webpush',
 ]
 
 MIDDLEWARE = [
@@ -181,9 +182,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 1. STATICFILES_DIRS (Opcional, se você tiver arquivos estáticos globais)
 # Onde o Django busca arquivos estáticos em desenvolvimento, além dos 'static' dentro dos apps.
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static_dev'), 
-# ]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'), 
+]
 
 # 2. STATIC_ROOT (Obrigatorio para collectstatic)
 # Onde o 'collectstatic' reunirá os arquivos para, então, o STATICFILES_STORAGE enviá-los ao R2.
@@ -243,27 +244,37 @@ if IS_BUILD:
         }
     }
 
-STORAGES = {
-    # 1. Configuração Padrão de Arquivos (Uploads de Usuário/Media)
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "OPTIONS": {
-            "bucket_name": AWS_STORAGE_BUCKET_NAME,
-            "endpoint_url": AWS_S3_ENDPOINT_URL,
-            "access_key": AWS_ACCESS_KEY_ID,
-            "secret_key": AWS_SECRET_ACCESS_KEY,
-            "location": "", # Opcional: define uma pasta 'media/' para uploads
-            "default_acl": "public-read",
-            "file_overwrite": False,
-        }
-    },
-    
-    # # 2. Configuração de Arquivos Estáticos (collectstatic)
-    # # STATICFILES
-    "staticfiles": {
-        "BACKEND": "church_site.storage_backends.R2StaticStorage",
-    },
-}
+if DEBUG:
+    # Em desenvolvimento, usamos o sistema de arquivos local
+    STATIC_URL = '/static/'
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+else:
+    # Em produção, mantém sua configuração do R2
+    STATIC_URL = config('STATIC_URL')
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "bucket_name": AWS_STORAGE_BUCKET_NAME,
+                "endpoint_url": AWS_S3_ENDPOINT_URL,
+                "access_key": AWS_ACCESS_KEY_ID,
+                "secret_key": AWS_SECRET_ACCESS_KEY,
+                "location": "", 
+                "default_acl": "public-read",
+                "file_overwrite": False,
+            }
+        },
+        "staticfiles": {
+            "BACKEND": "church_site.storage_backends.R2StaticStorage",
+        },
+    }
 
 # Email Backend - Durante o desenvolvimento, use o console backend
 if ENV == "local":
@@ -278,3 +289,10 @@ if ENV == "production":
     EMAIL_HOST_USER = config('EMAIL_HOST_USER')
     EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
     DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
+
+# https://pypi.org/project/django-webpush/
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": config('VAPID_PUBLIC_KEY'),
+    "VAPID_PRIVATE_KEY": config('VAPID_PRIVATE_KEY'),
+    "VAPID_ADMIN_EMAIL": config('VAPID_ADMIN_EMAIL'),
+}

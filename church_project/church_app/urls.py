@@ -38,4 +38,5 @@ urlpatterns = [
     path('plans/<int:plan_id>/delete/', views.delete_plan, name='delete_plan'),  # Rota para deletar um plano de leitura
     path('plans/<int:plan_id>/week/<int:week_number>/delete/', views.delete_week, name='delete_week'), # Rota para deletar uma semana do plano de leitura
     path('task/<int:task_id>/delete/', views.delete_task, name='delete_task'),  # Rota para deletar uma tarefa do plano de leitura
+    path('send_notification/', views.send_notification_view, name='send_notification'),  # Rota para enviar notificação de teste
 ]
