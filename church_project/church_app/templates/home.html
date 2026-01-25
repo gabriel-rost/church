@@ -1,13 +1,40 @@
 {% extends "base.html" %}
+
 {% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+<script src="{% static 'js/home.js' %}"></script>
+
+{% load webpush_notifications %}
+
+{% webpush_header %}
+
 <div class="container my-4">
 
-    <div class="p-4 p-md-5 mb-4 text-white bg-primary rounded-3 shadow-sm">
+    <div class="p-4 p-md-5 mb-4 text-white bg-primary rounded-3 shadow-sm position-relative overflow-hidden">
         <div class="col-md-10 px-0">
             {% if user.is_authenticated %}
             <h1 class="display-5 fw-bold">Bem-vindo(a) de volta, {{ user.username }}!</h1>
+            {% if user.is_staff %}
+            <div class="alert alert-info py-2 px-3 d-inline-flex align-items-center shadow-sm" role="alert" style="font-size: 0.9rem; border-radius: 50px;">
+                <i class="bi bi-shield-check me-2"></i> <strong>Admin:</strong>&nbsp;Você tem acesso ao painel de controle.
+            </div>
+            {% endif %}
             <p class="lead my-3">Confira as últimas novidades e o que está acontecendo na nossa comunidade hoje.</p>
-            <a href="{% url 'profile' user.username %}" class="btn btn-light btn-sm mt-2">Acessar Meu Perfil &rarr;</a>
+
+            <div class="d-flex flex-column align-items-start gap-3 mt-2">
+                <a href="{% url 'profile' user.username %}" class="btn btn-light btn-sm fw-bold px-4 rounded-pill">
+                    Acessar Meu Perfil &rarr;
+                </a>
+
+                <div class="notification-wrapper" onclick="translateProcess()">
+                    {% webpush_button %}
+                </div>
+            </div>
+
             {% else %}
             <h1 class="display-5 fw-bold">Bem-vindo(a) ao Church App</h1>
             <p class="lead my-3">Conecte-se com a comunidade, acompanhe eventos e leia posts inspiradores.</p>
@@ -58,6 +85,30 @@
                 </div>
             </div>
         </div>
+        {% endif %}
+
+        {% if user.is_authenticated and user.is_staff %}
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-danger border-opacity-50">
+                <div class="card-body d-flex flex-column justify-content-between">
+
+                    <div>
+                        <i class="bi bi-bell-fill text-danger display-6 mb-3"></i>
+                        <h5 class="card-title fw-bold text-danger">Enviar Notificação</h5>
+                        <p class="card-text text-muted small mt-2">
+                            Envie avisos importantes para toda a comunidade com apenas um clique.
+                        </p>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'send_notification' %}" class="btn btn-outline-danger w-100 fw-medium">
+                            Enviar Notificação &nbsp; <i class="bi bi-arrow-right-short"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {% endif %}
 
         <!-- <div class="col-lg-4">
