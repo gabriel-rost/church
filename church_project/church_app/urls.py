@@ -27,4 +27,16 @@ urlpatterns = [
     path('featured_post/<int:post_id>/', views.add_featured_post, name='featured_post'),  # Rota para adicionar post em destaque
     path('channel/<int:channel_pk>/posts/', views.infinite_scroll_post_list, name='infinite_post_list'),  # Rota para lista de posts com infinite scroll
     path('health_check/', views.health_check, name='health_check'),  # Rota para o endpoint de health check
+    path('bible/', views.bible_home, name='bible_home'), # Página inicial da Bíblia
+    path('bible/<int:book_id>/<int:chapter_number>/', views.read_chapter, name='read_chapter'), # Ler capítulo específico
+    path('bible/<int:book_id>/<int:chapter_number>/<int:verse_number_firth>/', views.read_verse, name='read_verse'), # Ler versículo específico
+    path('bible/<int:book_id>/<int:chapter_number>/<int:verse_number_firth>/<int:verse_number_second>/', views.read_verse, name='read_verse_range'), # Ler intervalo de versículos
+    path('plan/<int:plan_id>/admin/add_task/', views.admin_add_task, name='admin_add_task'), # Adicionar tarefa ao plano de leitura
+    path('plans/', views.plan_list, name='plan_list'),
+    path('plans/new/', views.create_plan, name='create_plan'),
+    path('plans/<int:plan_id>/', views.plan_detail, name='plan_detail'),
+    path('plans/<int:plan_id>/delete/', views.delete_plan, name='delete_plan'),  # Rota para deletar um plano de leitura
+    path('plans/<int:plan_id>/week/<int:week_number>/delete/', views.delete_week, name='delete_week'), # Rota para deletar uma semana do plano de leitura
+    path('task/<int:task_id>/delete/', views.delete_task, name='delete_task'),  # Rota para deletar uma tarefa do plano de leitura
+    path('send_notification/', views.send_notification_view, name='send_notification'),  # Rota para enviar notificação de teste
 ]

@@ -1,0 +1,31 @@
+/* Estilos para o botão de inscrição de notificações push */
+
+/* Container para alinhar corretamente */
+.notification-wrapper {
+    display: block;
+}
+
+#webpush-subscribe-button {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    /* Transparência sutil */
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    padding: 6px 16px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    border-radius: 50px !important;
+    transition: all 0.2s ease !important;
+}
+
+#webpush-subscribe-button:hover {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    border-color: white !important;
+}
+
+/* Se você quiser manter o texto ("Subscribe"), deixe o span visível agora */
+#webpush-subscribe-button span {
+    display: inline-block !important;
+}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">{{ book.name }}, Capítulo: {{ chapter.number }}</h2>
+    </div>
+
+    <div>
+        Versículo(s):
+        {% if verses != null %}
+            {{ verses.first.number }} - {{ verses.last.number }}
+        {% else %}
+            {{ verse.number }}
+        {% endif %}
+    </div>
+
+    <div class="card shadow-sm border-0 p-4" style="border-radius: 15px;">
+        {% if verses != null%}
+            {% for verse in verses %}
+                <div class="bible-text" style="font-size: 1.1rem; line-height: 1.8;">
+                    <span class="text-muted
+    small fw-bold me-1">{{ verse.number }}</span>
+                    <span class="me-2">{{ verse.text }}</span>
+                </div>
+            {% endfor %}
+        {% else %}
+        <div class="bible-text" style="font-size: 1.1rem; line-height: 1.8;">
+                <span class="text-muted small fw-bold me-1">{{ verse.number }}</span>
+                <span class="me-2">{{ verse.text }}</span>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -77,3 +77,31 @@ class UserForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+
+from django import forms
+from church_app.models.bible.book import Book, Chapter
+from .models import PlanTask
+
+class PlanTaskForm(forms.ModelForm):
+    # Campos extras para definir o intervalo de capítulos
+    book = forms.ModelChoiceField(queryset=Book.objects.all(), label="Livro", widget=forms.Select(attrs={'class': 'form-select'}))
+    start_chapter = forms.IntegerField(label="Capítulo Inicial", widget=forms.NumberInput(attrs={'class': 'form-select'}))
+    end_chapter = forms.IntegerField(label="Capítulo Final", widget=forms.NumberInput(attrs={'class': 'form-select'}))
+
+    class Meta:
+        model = PlanTask
+        fields = ['week_number', 'day_number']
+        widgets = {
+            'week_number': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 1'}),
+            'day_number': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 1'}),
+        }
+
+from .models.bible.plantask import ReadingPlan
+class ReadingPlanForm(forms.ModelForm):
+    class Meta:
+        model = ReadingPlan
+        fields = ['title', 'description']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 21 Dias com os Salmos'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
+        }
