@@ -37,5 +37,6 @@ jobs:
         AWS_S3_ENDPOINT_URL: "https://mock.endpoint"
         ACCOUNT_ID: "mock_account_id"
         CSRF_TRUSTED_ORIGINS: "http://localhost"
+        STATIC_URL: "/static/"
       run: |
         python manage.py test
