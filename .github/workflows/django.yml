@@ -38,5 +38,10 @@ jobs:
         ACCOUNT_ID: "mock_account_id"
         CSRF_TRUSTED_ORIGINS: "http://localhost"
         STATIC_URL: "/static/"
+        EMAIL_HOST_PASSWORD: "mockpassword"
+        EMAIL_HOST_USER: "mock@email.com"
+        VAPID_PUBLIC_KEY: "mock_public_key"
+        VAPID_PRIVATE_KEY: "mock_private_key"
+        VAPID_ADMIN_EMAIL: "mock@email.com"
       run: |
         python manage.py test
