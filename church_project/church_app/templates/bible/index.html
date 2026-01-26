@@ -95,8 +95,24 @@
         const verseStart = document.getElementById('verse_start').value;
         const verseEnd = document.getElementById('verse_end').value;
 
-        if (bookId && chapter && verseStart && verseEnd) {
-            const url = `{% url 'read_verse_range' 0 0 0 0 %}`.replace('/0/0/0/0/', `/${bookId}/${chapter}/${verseStart}/${verseEnd}/`);
+        const bookIdNum = parseInt(bookId, 10);
+        const chapterNum = parseInt(chapter, 10);
+        const verseStartNum = parseInt(verseStart, 10);
+        const verseEndNum = parseInt(verseEnd, 10);
+
+        if (
+            Number.isFinite(bookIdNum) && bookIdNum > 0 &&
+            Number.isFinite(chapterNum) && chapterNum > 0 &&
+            Number.isFinite(verseStartNum) && verseStartNum > 0 &&
+            Number.isFinite(verseEndNum) && verseEndNum > 0
+        ) {
+            const safePath = '/' +
+                encodeURIComponent(String(bookIdNum)) + '/' +
+                encodeURIComponent(String(chapterNum)) + '/' +
+                encodeURIComponent(String(verseStartNum)) + '/' +
+                encodeURIComponent(String(verseEndNum)) + '/';
+            const baseUrl = `{% url 'read_verse_range' 0 0 0 0 %}`;
+            const url = baseUrl.replace('/0/0/0/0/', safePath);
             window.location.href = url;
         }
     });
