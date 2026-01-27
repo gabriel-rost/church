@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<meta property="og:title" content="Post de {{ post.user.username }}">
+<meta property="og:description" content="{{ post.content.text|truncatechars:100 }}">
+<meta property="og:image" content="{{ post.content.attachments.first.file.url }}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+
 <div class="container my-5">
     
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">

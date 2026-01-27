@@ -3,9 +3,10 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
+from django.db.models import Exists, OuterRef
 
 from church_app.models import Channel
-
+from church_app.models import Like
 
 @login_required
 def post_list(request, channel_pk, page_size=5):
@@ -25,9 +26,20 @@ def post_list(request, channel_pk, page_size=5):
     posts_qs = (
         channel.posts
         .select_related("user", "content")
-        .prefetch_related("content__attachments")
+        .prefetch_related("content__attachments",
+                          "interactions",
+                          "interactions__user")
         .order_by("-date", "-pk")  # Adicione -pk aqui para manter a ordem fixa
     )
+
+    posts_qs = posts_qs.annotate(
+    user_has_liked=Exists(
+        Like.objects.filter(user=request.user, post=OuterRef('pk'))
+        )
+    )
+
+    for post in posts_qs:
+        post.full_url = request.build_absolute_uri(post.get_absolute_url())
 
     paginator = Paginator(posts_qs, page_size)  # 5 posts por requisição
     page_number = request.GET.get("page", 1)

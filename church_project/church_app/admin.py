@@ -12,6 +12,7 @@ from .models import (
     Chapter,
     Book,
     Verse,
+    Like,
 )
 
 admin.site.register(Post)
@@ -22,6 +23,7 @@ admin.site.register(Profile)
 admin.site.register(Channel)
 admin.site.register(ReadingPlan)
 admin.site.register(PlanTask)
+admin.site.register(Like)
 
 admin.site.site_header = "Administração Church App"
 admin.site.site_title = "Painel de Administração"
