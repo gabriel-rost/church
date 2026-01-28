@@ -94,15 +94,18 @@
     
     <hr class="my-5">
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            {% include "comment/_comment_form.html" %}
-            
-            <hr class="mt-4 mb-4">
-            
-            {% include "comment/_comment_list.html" with comments=comments %}
+    {% if user.is_authenticated %}
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                {% include "comment/_comment_form.html" %}
+                
+                <hr class="mt-4 mb-4">
+                
+                {% include "comment/_comment_list.html" with comments=comments %}
+            </div>
         </div>
-    </div>
+    {% endif %}
 </div>
 
 <script>
