@@ -8,3 +8,4 @@ from .add_comment import add_comment
 from .add_featured_post import add_featured_post
 from .infinite_scroll import post_list as infinite_scroll_post_list
 from .toggle_like import toggle_like
+from .post_likers import post_likers

@@ -195,41 +195,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # STATIC_URL = 'https://<SEU_CUSTOM_DOMAIN_OU_R2_PUBLIC_URL>/static/'
 
 
-
-# --- Configurações Cloudflare R2 (S3-Compatible) ---
-
-# Importante: O R2 usa a API S3. Você usará as chaves e o endpoint do R2.
-
-# 1. Credenciais do Cloudflare R2 (Geradas no painel R2)
-# Recomenda-se carregar de variáveis de ambiente (.env)
-AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
-
-# 2. Nome do seu Bucket R2
-AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
-
-# 3. Endpoint do Cloudflare R2
-# Formato: https://<SEU_ACCOUNT_ID>.r2.cloudflarestorage.com
-AWS_S3_ENDPOINT_URL = f'https://{config("ACCOUNT_ID")}.r2.cloudflarestorage.com'
-
-# 4. Versão da assinatura (necessário para R2)
-AWS_S3_SIGNATURE_VERSION = 's3v4'
-
-# 5. Configuração para Media Files (Uploads de Usuário - FileField/ImageField)
-# Use o backend S3Boto3Storage para R2
-#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_S3_FILE_OVERWRITE = False # Não sobrescrever arquivos com o mesmo nome
-
-# 6. (Opcional) Configuração para Static Files (CSS, JS, Imagens do Projeto)
-# Se você quiser servir arquivos estáticos pelo R2 (muito comum em produção)
-#STATICFILES_STORAGE = 'church_site.storage_backends.R2StaticStorage'
-# URL base para os arquivos estáticos (pode ser o R2 public bucket URL ou um Cloudflare Custom Domain)
-AWS_LOCATION = 'static'
-#STATIC_URL = 'https://pub-ba1a1273b7274c32ada11ba5a4254e40.r2.dev/'
-
-AWS_DEFAULT_ACL = 'public-read'
-
-AWS_S3_SIGNATURE_VERSION = 's3v4'
+if ENV == "production" and not DEBUG:
+    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_ENDPOINT_URL = f'https://{config("ACCOUNT_ID")}.r2.cloudflarestorage.com'
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_LOCATION = 'static'
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
 
 # --- Configuração Moderna de Storages (Django 4.2+) ---
 
