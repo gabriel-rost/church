@@ -2,10 +2,22 @@
 
 {% block content %}
 
-<meta property="og:title" content="Post de {{ post.user.username }}">
-<meta property="og:description" content="{{ post.content.text|truncatechars:100 }}">
-<meta property="og:image" content="{{ post.content.attachments.first.file.url }}">
+{% block extra_head %}
+<meta property="og:type" content="article">
+<meta property="og:title" content="Post de {{ post.user.username }} | Sua Igreja">
+<meta property="og:description" content="{{ post.content.text|truncatechars:150 }}">
 <meta property="og:url" content="{{ request.build_absolute_uri }}">
+
+{% if post.content.attachments.all %}
+    {% with post.content.attachments.first as attachment %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ attachment.file.url }}">
+    {% endwith %}
+{% endif %}
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Post de {{ post.user.username }}">
+<meta name="twitter:description" content="{{ post.content.text|truncatechars:150 }}">
+{% endblock %}
 
 <div class="container my-5">
     
