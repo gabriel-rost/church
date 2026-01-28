@@ -49,10 +49,32 @@
     {% endif %}
 
     {% endif %}
-    <div class="mt-2">
-      <a href="{% url 'post_detail' post.id %}" class="text-primary small text-decoration-none fw-medium">
-        Ver detalhes e comentários
-      </a>
+    <div class="mt-2 px-2">
+      <div class="d-flex gap-3 align-items-center">
+        <button
+          class="btn-insta-action p-0 border-0 bg-transparent {% if post.user_has_liked %}text-danger{% else %}text-dark{% endif %}"
+          id="like-btn-{{ post.id }}" data-post="{{ post.id }}">
+          <i class="bi {% if post.user_has_liked %}bi-heart-fill{% else %}bi-heart{% endif %} fs-4"></i>
+        </button>
+
+        <a href="{% url 'post_detail' post.id %}" class="text-dark p-0">
+          <i class="bi bi-chat fs-4"></i>
+        </a>
+
+        <button class="btn-insta-action p-0 border-0 bg-transparent text-dark" 
+                onclick="sharePost('Confira este post!', '{{ post.full_url }}')">
+            <i class="bi bi-send fs-4"></i>
+        </button>
+      </div>
+
+      <div class="mt-1">
+        <span class="fw-bold small cursor-pointer" 
+              id="count-{{ post.id }}" 
+              onclick="loadLikers('{{ post.id }}')" 
+              style="cursor: pointer;">
+            {{ post.interactions.count }} curtida{{ post.interactions.count|pluralize }}
+        </span>
+      </div>
     </div>
 
     {% if user.is_authenticated and user.is_staff %}
@@ -69,3 +91,127 @@
   {% empty %}
   <p>Nenhum post disponível.</p>
   {% endfor %}
+
+
+  <div class="modal fade" id="likersModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h6 class="modal-title w-100 text-center fw-bold">Curtidas</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="likers-modal-body">
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function sharePost(title, url) {
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            url: url
+        }).catch(console.error);
+    } else {
+        // Fallback: Copiar para a área de transferência
+        navigator.clipboard.writeText(url);
+        alert("Link copiado para a área de transferência!");
+    }
+}
+
+document.querySelectorAll('.btn-insta-action[data-post]').forEach(button => {
+    button.addEventListener('click', function() {
+        const postId = this.getAttribute('data-post');
+        
+        fetch(`/post/${postId}/toggle_like/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}', // Se estiver em arquivo JS separado, use a função getCookie
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Falha na requisição');
+            return response.json();
+        })
+        .then(data => {
+            const likeBtn = document.getElementById(`like-btn-${postId}`);
+            const countSpan = document.getElementById(`count-${postId}`);
+            
+            if (countSpan) {
+                // Lógica de pluralização correta
+                const label = data.like_count === 1 ? 'curtida' : 'curtidas';
+                countSpan.textContent = `${data.like_count} ${label}`;
+            }
+
+            if (likeBtn) {
+                if (data.liked) {
+                    likeBtn.classList.add('text-danger');
+                    likeBtn.classList.remove('text-dark');
+                    likeBtn.innerHTML = '<i class="bi bi-heart-fill fs-4 pulse-animation"></i>';
+                } else {
+                    likeBtn.classList.remove('text-danger');
+                    likeBtn.classList.add('text-dark');
+                    likeBtn.innerHTML = '<i class="bi bi-heart fs-4"></i>';
+                }
+            }
+        })
+        .catch(error => console.error('Erro ao curtir:', error));
+    });
+});
+
+function loadLikers(postId) {
+    const modalBody = document.getElementById('likers-modal-body');
+    const myModal = new bootstrap.Modal(document.getElementById('likersModal'));
+    
+    modalBody.innerHTML = '<div class="text-center py-3"><div class="spinner-border spinner-border-sm text-secondary"></div></div>';
+    myModal.show();
+
+    fetch(`/post/${postId}/likers/`)
+        .then(response => response.text())
+        .then(html => {
+            modalBody.innerHTML = html;
+        });
+}
+</script>
+
+  <style>
+    .btn-insta-action {
+    transition: transform 0.1s ease-in-out;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.btn-insta-action:active {
+    transform: scale(1.2); /* Efeito de clique */
+}
+
+.text-danger {
+    color: #ed4956 !important; /* Vermelho padrão Instagram */
+}
+
+/* Garante que o ícone preenchido tenha um leve contorno se necessário */
+.bi-heart-fill {
+    animation: heartBeat 0.3s ease-in-out;
+}
+
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+
+/* Faz o contador de curtidas parecer um link interativo */
+.cursor-pointer:hover {
+    text-decoration: underline;
+}
+
+/* Deixa a lista de curtidores no modal mais limpa */
+#likers-modal-body .list-group-item {
+    padding: 0.75rem 0.5rem;
+}
+  </style>

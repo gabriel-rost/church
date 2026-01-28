@@ -1,0 +1,15 @@
+<div class="list-group list-group-flush">
+    {% for like in likes %}
+    <div class="list-group-item border-0 d-flex align-items-center px-0">
+        <div class="bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center text-white" style="width: 35px; height: 35px; font-size: 12px;">
+            {{ like.user.username|slice:":1"|upper }}
+        </div>
+        <div>
+            <span class="fw-bold d-block small">{{ like.user.username }}</span>
+            <span class="text-muted" style="font-size: 10px;">{{ like.get_type_display }}</span>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-muted small">Nenhuma curtida ainda.</p>
+    {% endfor %}
+</div>
