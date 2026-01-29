@@ -7,3 +7,4 @@ from .health_check import *
 from .bible import *
 from .plans import *
 from .send_notification import *
+from .search.search_homepage import *
