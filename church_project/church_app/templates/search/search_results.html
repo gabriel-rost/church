@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load highlight %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div>
+        <a href="{% url 'search_homepage' %}" class="btn btn-outline-secondary btn-sm mb-3">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <h2 class="mb-4">
+        Resultados da busca por “{{ query }}”
+    </h2>
+
+    {# ================= POSTS ================= #}
+    {% if posts %}
+        <h3 class="mt-4 mb-3">Posts</h3>
+
+        {% for post in posts %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+
+                    {% if post.content.title %}
+                        <h5 class="card-title">
+                            {{ post.content.title|highlight:query|safe }}
+                        </h5>
+                    {% endif %}
+
+                    <p class="card-text text-muted">
+                        {{ post.content.text|truncatechars:250|highlight:query|safe }}
+                    </p>
+
+                    <div>
+                        <a href="{% url 'post_detail' post_id=post.id %}" class="btn btn-primary btn-sm">
+                            Ler mais
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        {% endfor %}
+
+        {# ===== Paginação de Posts ===== #}
+        {% if posts.has_other_pages %}
+            <nav class="mt-4">
+                <ul class="pagination">
+
+                    {% if posts.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?q={{ query }}&page={{ posts.previous_page_number }}">
+                                ← Anterior
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            Página {{ posts.number }} de {{ posts.paginator.num_pages }}
+                        </span>
+                    </li>
+
+                    {% if posts.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?q={{ query }}&page={{ posts.next_page_number }}">
+                                Próxima →
+                            </a>
+                        </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+        {% endif %}
+    {% endif %}
+
+    {# ================= USERS ================= #}
+    {% if users %}
+        <h3 class="mt-5 mb-3">Usuários</h3>
+
+        <div class="list-group">
+            {% for profile in users %}
+                <div class="list-group-item">
+                    <strong>
+                        {{ profile.user.username|highlight:query|safe }}
+                    </strong>
+
+                    {% if profile.user.first_name or profile.user.last_name %}
+                        <div class="text-muted small">
+                            {{ profile.user.get_full_name }}
+                        </div>
+                    {% endif %}
+                    <div>
+                        <a href="{% url 'profile_by_id' user_id=profile.user.id %}" class="btn btn-outline-primary btn-sm mt-2">
+                            Ver Perfil
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {# ================= EMPTY STATE ================= #}
+    {% if not posts and not users %}
+        <div class="alert alert-secondary mt-4">
+            Nenhum resultado encontrado para
+            <strong>“{{ query }}”</strong>.
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+        <h2 class="mb-0 fw-bold">Busca Avançada</h2>
+    </div>
+
+    <div class="card p-4 shadow-sm border-0">
+        <form method="get" action="{% url 'search_results' %}" class="search-form">
+            <div class="mb-3">
+                <label for="query" class="form-label fw-semibold">O que você está procurando?</label>
+                <input type="text" class="form-control" id="query" name="q" placeholder="Digite palavras-chave, nomes de usuários" required>
+            </div>
+            <div>
+                <label for="filter" class="form-label fw-semibold">Filtrar por:</label>
+                <select class="form-select" id="filter" name="filter">
+                    <option value="all" selected>Todos</option>
+                    <option value="posts">Posts</option>
+                    <option value="users">Usuários</option>
+                </select>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary fw-bold">
+                <i class="bi bi-search me-2"></i> Buscar
+            </button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

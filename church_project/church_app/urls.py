@@ -12,7 +12,8 @@ urlpatterns = [
     path('home/', views.home, name='home'),  # Página inicial após login
     path('', views.home, name='home'),  # Rota raiz direciona para a home
     path('post/<int:post_id>/add_comment/', views.add_comment, name='add_comment'),  # Rota para adicionar comentário
-    path('profile/<str:username>/', views.perfil_view, name='profile'),  # Rota para a página de perfil do usuário
+    path('profile/<str:username>/', views.get_profile_by_username, name='profile'),  # Rota para a página de perfil do usuário
+    path('profile/id/<int:user_id>/', views.get_profile_by_id, name='profile_by_id'),  # Rota para a página de perfil do usuário por ID
     path('post/<int:post_id>/edit/', views.edit_post, name='edit_post'),  # Rota para editar um post
     path('attachment/<int:attachment_id>/remove/', views.remove_attachment, name='remove_attachment'),  # Rota para remover um anexo
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),  # Rota para deletar um post
@@ -41,4 +42,6 @@ urlpatterns = [
     path('send_notification/', views.send_notification_view, name='send_notification'),  # Rota para enviar notificação de teste
     path('post/<int:post_id>/toggle_like/', views.toggle_like, name='toggle_like'),  # Rota para curtir/descurtir um post
     path('post/<int:post_id>/likers/', views.post_likers, name='post_likers'), # Rota para ver quem curtiu um post
+    path('search/', views.search_homepage, name='search_homepage'),  # Rota para a página inicial de busca
+    path('search/results/', views.search_results, name='search_results'),  # Rota para os resultados da busca
 ]
