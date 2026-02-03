@@ -44,4 +44,5 @@ urlpatterns = [
     path('post/<int:post_id>/likers/', views.post_likers, name='post_likers'), # Rota para ver quem curtiu um post
     path('search/', views.search_homepage, name='search_homepage'),  # Rota para a página inicial de busca
     path('search/results/', views.search_results, name='search_results'),  # Rota para os resultados da busca
+    path('share_verse/', views.share_verse, name='share_verse'),  # Rota para compartilhar versículo
 ]

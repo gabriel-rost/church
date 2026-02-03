@@ -7,6 +7,20 @@
     </div>
 
     <div>
+        Compartilhar:
+        <a href="https://api.whatsapp.com/send?text={{ book.name }} {{ chapter.number }}:{{ verse.number }} - {{ request.build_absolute_uri }}" target="_blank" class="me-2">
+            <i class="bi bi-whatsapp fs-4 text-success"></i>
+        </a>
+
+        <a href="{% url 'share_verse' %}?text={{ book.name }} Capítulo: {{ chapter.number }} versículo(s): {{ verses.first.number }}-{{ verses.last.number }} {{ request.build_absolute_uri }}"
+            class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-share-fill me-1"></i>
+            Compartilhar
+        </a>
+
+    </div>
+
+    <div class="" id="verses">
         Versículo(s):
         {% if verses != null %}
             {{ verses.first.number }} - {{ verses.last.number }}
@@ -32,4 +46,20 @@
         {% endif %}
     </div>
 </div>
+
+<script>
+  function sharePost(title, url) {
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            url: url
+        }).catch(console.error);
+    } else {
+        // Fallback: Copiar para a área de transferência
+        navigator.clipboard.writeText(url);
+        alert("Link copiado para a área de transferência!");
+    }
+}
+</script>
+
 {% endblock %}
