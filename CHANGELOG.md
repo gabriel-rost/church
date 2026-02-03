@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/gabriel-rost/church/compare/v1.1.0...v1.2.0) (2026-02-03)
+
+
+### Features
+
+* add share verse functionality ([1f100a7](https://github.com/gabriel-rost/church/commit/1f100a7d2c7e69e14b6399973bcba58828dc2307))
+
 # [1.1.0](https://github.com/gabriel-rost/church/compare/v1.0.0...v1.1.0) (2026-01-29)
 
 
