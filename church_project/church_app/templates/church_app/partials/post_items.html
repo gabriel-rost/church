@@ -17,7 +17,7 @@
       <h6 class="fw-bold text-dark">{{ post.content.title }}</h6>
     {% endif %}
 
-    <p class="mb-2 text-break">{{ post.content.text }}</p>
+    <p class="mb-2 text-break">{{ post.content.text|linebreaksbr|urlize }}</p>
 
     {% if post.content.images.all or post.content.attachments.all %}
     <div class="mt-2">

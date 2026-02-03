@@ -48,8 +48,13 @@ def create_post(request, channel_pk):
             return redirect('infinite_post_list', channel_pk=channel.pk)
 
     else:
-        # Requisição GET: Exibe o formulário vazio
-        form = ContentForm()
+        initial = {}
+
+        if "text" in request.GET:
+            initial["text"] = request.GET.get("text")
+
+        form = ContentForm(initial=initial)
+
         
     context = {
         'form': form,
