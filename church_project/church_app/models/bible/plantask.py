@@ -24,6 +24,11 @@ class PlanTask(models.Model):
         related_name='plan_tasks'
     )
 
+    # Campos opcionais para versículos específicos
+    # Se start_verse existir, chapters deve ter apenas um capítulo
+    start_verse = models.PositiveIntegerField(null=True, blank=True)
+    end_verse = models.PositiveIntegerField(null=True, blank=True)
+
     class Meta:
         # Ordena automaticamente por semana e depois por dia
         ordering = ['week_number', 'day_number']
@@ -35,14 +40,16 @@ class PlanTask(models.Model):
 
     @property
     def chapter_summary(self):
-        """Retorna um texto amigável como 'Gênesis 1-3' ou 'João 3, 4'"""
         chapters = self.chapters.all().order_by('number')
         if not chapters:
             return "Nenhum capítulo definido"
-        
-        book_name = chapters[0].book.name
-        nums = [str(c.number) for c in chapters]
-        
+
+        book = chapters[0].book.name
+
+        if self.start_verse:
+            return f"{book} {chapters[0].number}:{self.start_verse}-{self.end_verse}"
+
+        nums = [c.number for c in chapters]
         if len(nums) > 1:
-            return f"{book_name} {nums[0]}-{nums[-1]}"
-        return f"{book_name} {nums[0]}"
+            return f"{book} {nums[0]}-{nums[-1]}"
+        return f"{book} {nums[0]}"
