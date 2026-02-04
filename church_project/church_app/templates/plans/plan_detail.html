@@ -69,18 +69,28 @@
 
 
 
-                            <div class="pe-2">
-                                {% with first_chapter=task.chapters.first %}
-                                    {% if first_chapter %}
-                                        <a href="{% url 'read_chapter' first_chapter.book.id first_chapter.number %}" 
-                                        class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
-                                        {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
-                                        </a>
-                                    {% else %}
-                                        <span class="badge bg-warning text-dark">Sem capítulos</span>
-                                    {% endif %}
-                                {% endwith %}
-                            </div>
+<div class="pe-2">
+    {% with first_chapter=task.chapters.first %}
+        {% if first_chapter %}
+
+            {% if task.start_verse %}
+                <a href="{% url 'read_verse_range' first_chapter.book.id first_chapter.number task.start_verse task.end_verse %}"
+                   class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
+                    {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
+                </a>
+            {% else %}
+                <a href="{% url 'read_chapter' first_chapter.book.id first_chapter.number %}"
+                   class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
+                    {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
+                </a>
+            {% endif %}
+
+        {% else %}
+            <span class="badge bg-warning text-dark">Sem capítulos</span>
+        {% endif %}
+    {% endwith %}
+</div>
+
 
                             {% if user.is_staff %}
                             <form action="{% url 'delete_task' task.id %}" method="post" class="d-inline ms-2">

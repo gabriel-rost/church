@@ -38,6 +38,34 @@
                             {{ form.end_chapter }}
                         </div>
 
+                        <div class="col-12">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="toggleVerses">
+                                <label class="form-check-label text-muted">
+                                    Ler versículos específicos
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="verseFields" class="row g-3 mt-1" style="display:none">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Do versículo</label>
+                                {{ form.start_verse }}
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Até o versículo</label>
+                                {{ form.end_verse }}
+                            </div>
+                        </div>
+                        
+                        <script>
+                            document.getElementById('toggleVerses').addEventListener('change', function () {
+                                document.getElementById('verseFields').style.display =
+                                    this.checked ? 'flex' : 'none';
+                            });
+                        </script>
+
+
                         <div class="col-12 mt-4">
                             <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-bold">
                                 Salvar Meta de Leitura

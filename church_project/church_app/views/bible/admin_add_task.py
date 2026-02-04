@@ -12,6 +12,10 @@ def admin_add_task(request, plan_id):
             # 1. Salva a tarefa (Semana e Dia)
             task = form.save(commit=False)
             task.plan = plan
+
+            task.start_verse = form.cleaned_data.get('start_verse')
+            task.end_verse = form.cleaned_data.get('end_verse')
+
             task.save()
 
             # 2. Busca os capítulos no banco baseado no intervalo escolhido

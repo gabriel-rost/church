@@ -88,6 +88,18 @@ class PlanTaskForm(forms.ModelForm):
     start_chapter = forms.IntegerField(label="Capítulo Inicial", widget=forms.NumberInput(attrs={'class': 'form-select'}))
     end_chapter = forms.IntegerField(label="Capítulo Final", widget=forms.NumberInput(attrs={'class': 'form-select'}))
 
+    start_verse = forms.IntegerField(
+        label="Versículo Inicial",
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+
+    end_verse = forms.IntegerField(
+        label="Versículo Final",
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = PlanTask
         fields = ['week_number', 'day_number']
@@ -95,6 +107,38 @@ class PlanTaskForm(forms.ModelForm):
             'week_number': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 1'}),
             'day_number': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 1'}),
         }
+    
+    def clean(self):
+        cleaned = super().clean()
+
+        sc = cleaned.get('start_chapter')
+        ec = cleaned.get('end_chapter')
+        sv = cleaned.get('start_verse')
+        ev = cleaned.get('end_verse')
+
+        # Versículos só podem existir em um único capítulo
+        if sv or ev:
+            if ec and ec != sc:
+                raise forms.ValidationError(
+                    "Versículos só podem ser definidos para um único capítulo."
+                )
+
+            if not sv or not ev:
+                raise forms.ValidationError(
+                    "Informe o versículo inicial e final."
+                )
+
+            if sv > ev:
+                raise forms.ValidationError(
+                    "Versículo inicial não pode ser maior que o final."
+                )
+
+        # Se não informou capítulo final
+        if not ec:
+            cleaned['end_chapter'] = sc
+
+        return cleaned
+
 
 from .models.bible.plantask import ReadingPlan
 class ReadingPlanForm(forms.ModelForm):
