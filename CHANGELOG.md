@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/gabriel-rost/church/compare/v1.2.0...v1.3.0) (2026-02-04)
+
+
+### Features
+
+* add support for specific verse ranges in reading tasks ([4d9cb48](https://github.com/gabriel-rost/church/commit/4d9cb481b346e5bcdb505f1369969538fee37a4f))
+* consolidate migration files for Book, Chapter, Verse, ReadingPlan, and PlanTask models ([f7d15cf](https://github.com/gabriel-rost/church/commit/f7d15cf307c5c8a0e370e683187e7b831829c754))
+
 # [1.2.0](https://github.com/gabriel-rost/church/compare/v1.1.0...v1.2.0) (2026-02-03)
 
 
