@@ -21,7 +21,7 @@ jmespath==1.0.1
 Markdown==3.10
 multidict==6.7.0
 packaging==25.0
-pillow==11.3.0
+pillow==12.1.1
 propcache==0.4.1
 psycopg2-binary==2.9.10
 py-vapid==1.9.2
