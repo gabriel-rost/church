@@ -80,9 +80,11 @@
   </nav>
   {% endif %}
 
-  <div class="container">
-    {% block content %}{% endblock %}
-  </div>
+  <main class="content-wrapper">
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
   {% comment %}
   *** FIM DA BARRA INFERIOR DE NAVEGAÇÃO MOBILE ***
   {% endcomment %}
