@@ -25,8 +25,8 @@ def post_list(request, channel_pk, page_size=5):
     # Query otimizada
     posts_qs = (
         channel.posts
-        .select_related("user", "content")
-        .prefetch_related("content__attachments",
+        .select_related("user",)
+        .prefetch_related("attachments",
                           "interactions",
                           "interactions__user")
         .order_by("-date", "-pk")  # Adicione -pk aqui para manter a ordem fixa

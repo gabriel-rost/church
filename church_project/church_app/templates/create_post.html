@@ -10,7 +10,7 @@
 
 <div class="card mb-3">
   <div class="card-body">
-    <form method="POST" enctype="multipart/form-data">
+    <form id="postForm" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
 
       {{ form.title }}
@@ -20,6 +20,7 @@
       </div>
 
       <div class="d-flex align-items-center gap-2 mb-3">
+        <div id="js-error" class="alert alert-danger d-none"></div>
         <button type="submit" class="btn btn-primary">Post</button>
 
         <label for="id_attachments" class="btn btn-light mb-0">
@@ -145,6 +146,35 @@ document.addEventListener("DOMContentLoaded", function() {
 
     input.files = dataTransfer.files;
   }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    const form = document.getElementById("postForm");
+    const title = document.getElementById("id_title");
+    const text = document.getElementById("id_text");
+    const attachments = document.getElementById("id_attachments");
+    const errorBox = document.getElementById("js-error");
+
+    form.addEventListener("submit", function(event) {
+
+        const titleValue = title ? title.value.trim() : "";
+        const textValue = text ? text.value.trim() : "";
+        const filesCount = attachments.files.length;
+
+        if (!titleValue && !textValue && filesCount === 0) {
+            event.preventDefault();
+
+            errorBox.classList.remove("d-none");
+            errorBox.textContent = "O post não pode estar vazio.";
+
+            return;
+        }
+
+        errorBox.classList.add("d-none");
+    });
+
 });
 </script>
 {% endblock %}

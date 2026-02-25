@@ -1,14 +1,16 @@
 from django import forms
 
-from .models.post import Archive, Content
+from .models.post import Archive, Post
 from .models import Profile
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
 
 # 1. Formulário principal para os dados de texto
-class ContentForm(forms.ModelForm):
+class PostForm(forms.ModelForm):
     class Meta:
-        model = Content
+        model = Post
         fields = ['title', 'text']
         
         # Adiciona widgets para aplicar classes CSS e atributos HTML
@@ -25,6 +27,19 @@ class ContentForm(forms.ModelForm):
                 'placeholder': 'Título',
             }),
         }
+
+        def clean(self):
+            cleaned_data = super().clean()
+            text = cleaned_data.get("text")
+            title = cleaned_data.get("title")
+
+            # Aqui você pega os arquivos do request
+            files = self.files.getlist("attachments")
+
+            if not text and not title and not files:
+                raise ValidationError("O post não pode estar vazio.")
+
+            return cleaned_data
 
 # 2. Formulário para o upload de arquivos. 
 # Embora você possa ter vários arquivos, usaremos este form para processar cada upload.

@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from church_app.models import Channel
-from church_app.forms import ContentForm
+from church_app.forms import PostForm
 from church_app.models.post.post import Post
 
 from django.shortcuts import redirect

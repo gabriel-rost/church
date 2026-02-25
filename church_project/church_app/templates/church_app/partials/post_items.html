@@ -11,22 +11,22 @@
       </small>
     </div>
     
-    {% if post.content %}
+    {% if post %}
 
-    {% if post.content.title %}
-      <h6 class="fw-bold text-dark">{{ post.content.title }}</h6>
+    {% if post.title %}
+      <h6 class="fw-bold text-dark">{{ post.title }}</h6>
     {% endif %}
 
-    <p class="mb-2 text-break">{{ post.content.text|linebreaksbr|urlize }}</p>
+    <p class="mb-2 text-break">{{ post.text|linebreaksbr|urlize }}</p>
 
-    {% if post.content.images.all or post.content.attachments.all %}
+    {% if post.images.all or post.attachments.all %}
     <div class="mt-2">
       
-      {% for image in post.content.images.all %}
+      {% for image in post.images.all %}
       <img src="{{ image.ref }}" class="img-fluid w-100 rounded-3 mb-2" alt="Imagem do Post">
       {% endfor %}
       
-      {% for attachment in post.content.attachments.all %}
+      {% for attachment in post.attachments.all %}
       {% with attachment.file.url|lower as f %}
         
         {% if ".jpg" in f or ".jpeg" in f or ".png" in f or ".gif" in f %}
