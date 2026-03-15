@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/gabriel-rost/church/compare/v1.3.0...v1.3.1) (2026-02-24)
+
+
+### Bug Fixes
+
+* use correctly css rule for desktop sidebar ([0d1b9a7](https://github.com/gabriel-rost/church/commit/0d1b9a7e7b203b3dc7efe0d36274d9a6ebd4d82e))
+
 # [1.3.0](https://github.com/gabriel-rost/church/compare/v1.2.0...v1.3.0) (2026-02-04)
 
 
