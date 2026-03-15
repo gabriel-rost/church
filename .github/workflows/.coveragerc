@@ -1,0 +1,10 @@
+[run]
+source = church_app
+omit =
+    */migrations/*
+    */.venv/*
+    */tests/*
+    manage.py
+
+[report]
+fail_under = 20
