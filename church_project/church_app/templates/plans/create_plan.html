@@ -16,11 +16,19 @@
                         <label class="form-label fw-bold">Descrição</label>
                         {{ form.description }}
                     </div>
-                    <div class="mb-4">
+                    <div>
+                        <label for="draft" class="form-label">Status do Plano</label>
+                        <select class="form-select" id="draft" name="draft">
+                            <option value="True" {% if plan.draft %}selected{% endif %}>Rascunho</option>
+                            <option value="False" {% if not plan.draft %}selected{% endif %}>Publicado</option>
+                        </select>
+                    </div>
+                    <!-- <div class="mb-4">
                         <label class="form-label fw-bold">Imagem de Capa (Opcional)</label>
                         {{ form.cover_image }}
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">Criar e Lançar Leituras</button>
+                    </div> -->
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">Criar e Lançar
+                        Leituras</button>
                     <a href="{% url 'plan_list' %}" class="btn btn-link w-100 text-muted mt-2">Cancelar</a>
                 </form>
             </div>

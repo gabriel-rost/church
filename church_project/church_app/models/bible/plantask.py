@@ -1,10 +1,15 @@
 from django.db import models
 from church_app.models.bible.book import Chapter  # Importando seu modelo de capítulos
+from django.utils import timezone
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class ReadingPlan(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    draft = models.BooleanField(default=True)  # Indica se o plano está em rascunho ou publicado
 
     def __str__(self):
         return self.title
@@ -53,3 +58,59 @@ class PlanTask(models.Model):
         if len(nums) > 1:
             return f"{book} {nums[0]}-{nums[-1]}"
         return f"{book} {nums[0]}"
+
+
+class UserPlanProgress(models.Model):
+    '''
+    - saber se o usuário iniciou o plano
+    - saber quando terminou
+    - evitar iniciar duas vezes
+    '''
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    plan = models.ForeignKey(ReadingPlan, on_delete=models.CASCADE)
+
+    started_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("user", "plan")
+
+    def __str__(self):
+        return f"{self.user} - {self.plan}"
+
+class UserTaskProgress(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    task = models.ForeignKey(PlanTask, on_delete=models.CASCADE)
+
+    completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("user", "task")
+
+    def complete(self):
+        if not self.completed:
+            self.completed = True
+            self.completed_at = timezone.now()
+            self.save()
+
+    def __str__(self):
+        return f"{self.user} - {self.task}"
+    
+def get_progress_percentage(user, plan):
+    '''
+    Cálculo do progresso do plano
+    '''
+    total = plan.tasks.count()
+
+    completed = UserTaskProgress.objects.filter(
+        user=user,
+        task__plan=plan,
+        completed=True
+    ).count()
+
+    if total == 0:
+        return 0
+
+    return int((completed / total) * 100)

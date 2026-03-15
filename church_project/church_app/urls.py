@@ -45,4 +45,10 @@ urlpatterns = [
     path('search/', views.search_homepage, name='search_homepage'),  # Rota para a página inicial de busca
     path('search/results/', views.search_results, name='search_results'),  # Rota para os resultados da busca
     path('share_verse/', views.share_verse, name='share_verse'),  # Rota para compartilhar versículo
+    path('plans/<int:plan_id>/edit/', views.edit_plan, name='edit_plan'),  # Rota para editar um plano de leitura
+    path('plans/<int:plan_id>/start/', views.start_plan, name='start_plan'),  # Rota para iniciar um plano de leitura
+    path('task/<int:task_id>/complete/',views.complete_task, name='complete_task'),
+    path('plans/<int:plan_id>/continue/',views.continue_plan, name='continue_plan'),
+    path('dashboard/plans/<int:plan_id>/community/', views.community_plan_dashboard,name="community_plan_dashboard"),
+    path('plans/<int:plan_id>/users/', views.plan_users, name='plan_users')
 ]

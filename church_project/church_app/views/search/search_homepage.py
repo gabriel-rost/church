@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.db.models import Q, Case, When, IntegerField
 from django.core.paginator import Paginator
-from church_app.models import Post, Profile
+from church_app.models import Post
+from django.conf import settings
 
 @login_required
 def search_homepage(request):
@@ -15,7 +16,7 @@ def search_results(request):
     filters = request.GET.getlist("filter")
 
     posts = Post.objects.none()
-    users = Profile.objects.none()
+    users = settings.AUTH_USER_MODEL.objects.none()
 
     if not query:
         return render(
@@ -26,25 +27,25 @@ def search_results(request):
 
     # queryset base de posts
     posts_qs = (
-        Post.objects.select_related("content")
-        .filter(
-            Q(content__title__icontains=query) |
-            Q(content__text__icontains=query)
-        )
-        .annotate(
-            relevance=Case(
-                When(content__title__icontains=query, then=2),
-                When(content__text__icontains=query, then=1),
-                default=0,
-                output_field=IntegerField(),
+            # Removed .select_related("post") as it's self-referential and invalid here
+            Post.objects.filter(
+                Q(title__icontains=query) |
+                Q(text__icontains=query)
             )
+            .annotate(
+                relevance=Case(
+                    When(title__icontains=query, then=2),
+                    When(text__icontains=query, then=1),
+                    default=0,
+                    output_field=IntegerField(),
+                )
+            )
+            .order_by("-relevance")
+            .distinct()
         )
-        .order_by("-relevance")
-        .distinct()
-    )
 
     # usuários
-    users_qs = Profile.objects.filter(
+    users_qs = settings.AUTH_USER_MODEL.objects.filter(
         Q(user__username__icontains=query) |
         Q(user__first_name__icontains=query) |
         Q(user__last_name__icontains=query)

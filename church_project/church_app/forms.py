@@ -1,11 +1,11 @@
 from django import forms
 
 from .models.post import Archive, Post
-from .models import Profile
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 # 1. Formulário principal para os dados de texto
 class PostForm(forms.ModelForm):
@@ -62,25 +62,32 @@ class SignUpForm(UserCreationForm):
             raise forms.ValidationError("Esse e-mail já está em uso.")
         return email
     
-class ProfileForm(forms.ModelForm):
-    avatar_upload = forms.FileField(required=False)
+class UserProfileForm(forms.ModelForm):
+    # Campo para upload manual (não está no banco de dados)
+    avatar_upload = forms.ImageField(required=False, label="Alterar Foto de Perfil")
 
     class Meta:
-        model = Profile
-        fields = ["bio", "phone", "location", "birth_date"]
+        model = User # Agora aponta para o seu Custom User
+        fields = ["first_name", "last_name", "email", "bio", "phone", "location", "birth_date"]
 
     def save(self, commit=True):
-        profile = super().save(commit=False)
+        # O 'profile' aqui é, na verdade, a instância do seu Usuário
+        user_instance = super().save(commit=False)
 
         avatar_file = self.cleaned_data.get("avatar_upload")
         if avatar_file:
+            # 1. Cria o objeto Archive
+            # Supondo que seu model Archive tenha um campo 'file' ou 'archive'
+            from .models import Archive 
             archive = Archive.objects.create(file=avatar_file)
-            profile.avatar = archive
+            
+            # 2. Associa à instância do usuário (não à Classe User)
+            user_instance.avatar = archive
 
         if commit:
-            profile.save()
+            user_instance.save()
 
-        return profile
+        return user_instance
 
 
 class UserForm(forms.ModelForm):
@@ -159,7 +166,7 @@ from .models.bible.plantask import ReadingPlan
 class ReadingPlanForm(forms.ModelForm):
     class Meta:
         model = ReadingPlan
-        fields = ['title', 'description']
+        fields = ['title', 'description', 'draft']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 21 Dias com os Salmos'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
