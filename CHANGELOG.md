@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/gabriel-rost/church/compare/v1.4.0...v1.5.0) (2026-03-15)
+
+
+### Features
+
+* add Codecov integration for coverage reports in Django CI workflow ([b5dcecb](https://github.com/gabriel-rost/church/commit/b5dcecbc747a83a578b7ae30caa32eef1fc5ee3b))
+
 # [1.4.0](https://github.com/gabriel-rost/church/compare/v1.3.1...v1.4.0) (2026-03-15)
 
 
