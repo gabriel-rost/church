@@ -80,7 +80,7 @@
   </nav>
   {% endif %}
 
-  <main class="content-wrapper">
+  <main class="content-wrapper {% if user.is_authenticated %}has-sidebar{% endif %}">
     <div class="container">
       {% block content %}{% endblock %}
     </div>
@@ -140,6 +140,12 @@
   <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
   <style>
+
+  :root {
+      /* Se estiver deslogado, a largura da sidebar no cálculo será 0 */
+      --sidebar-width: {% if user.is_authenticated %}260px{% else %}0px{% endif %};
+    }
+
     /* Estilização da Barra Inferior */
     .bottom-nav {
       position: fixed;
@@ -230,8 +236,7 @@
     /* Ajuste do conteúdo principal para não ficar embaixo da sidebar */
     @media (min-width: 992px) {
       main.content-wrapper {
-        margin-left: 260px;
-        /* Largura da sidebar */
+        margin-left: var(--sidebar-width);
         padding: 20px;
       }
     }

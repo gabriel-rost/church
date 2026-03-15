@@ -269,3 +269,5 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": config('VAPID_PRIVATE_KEY'),
     "VAPID_ADMIN_EMAIL": config('VAPID_ADMIN_EMAIL'),
 }
+
+AUTH_USER_MODEL = 'church_app.User'  # Formato: 'nome_do_app.NomeDoModelo'

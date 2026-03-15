@@ -1,6 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+
+    <a href="{% url 'plan_list' %}" class="btn btn-outline-soft btn-pill-sm">
+        <i class="bi bi-arrow-left me-1"></i>
+        Planos
+    </a>
+
+    <h6 class="mb-0 fw-bold text-muted">
+        {{ plan.title }}
+    </h6>
+
+    {% if user.is_staff %}
+    <a href="{% url 'community_plan_dashboard' plan.id %}"
+       class="btn btn-main btn-pill-sm">
+
+        <i class="bi bi-bar-chart me-1"></i>
+        Comunidade
+
+    </a>
+    <a href="{% url 'plan_users' plan.id %}"
+    class="btn btn-main btn-pill-sm">
+
+    <i class="bi bi-people"></i>
+    Usuários
+
+    </a>
+
+    {% endif %}
+
+</div>
 <div class="container mt-4 mb-5 pb-5">
 
     <div class="card border-0 shadow-sm mb-4"
@@ -9,12 +39,35 @@
             <h2 class="fw-bold mb-1">{{ plan.title }}</h2>
             <p class="opacity-75 mb-3">{{ plan.description }}</p>
 
+            {% if plan.draft %}
+            <p>RASCUNHO</p>
+            {% endif %}
+
             <div class="bg-white bg-opacity-25 rounded-pill p-1" style="height: 12px;">
                 <div class="bg-white rounded-pill h-100" style="width: {{ progress_percentage }}%; transition: 0.5s;">
                 </div>
             </div>
             <small class="d-block mt-2 fw-semibold">{{ progress_percentage }}% concluído</small>
         </div>
+    </div>
+
+    <div>
+        {% if user.is_authenticated %}
+        {% if progress_percentage %}
+        <a href="{% url 'continue_plan' plan.id %}" class="btn btn-outline-secondary rounded-pill mb-4 fw-bold">
+            Continuar Plano
+        </a>
+        {% else %}
+        <a href="{% url 'start_plan' plan.id %}" class="btn btn-primary rounded-pill mb-4 fw-bold">
+            Iniciar Plano
+        </a>
+        {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}?next={% url 'plan_detail' plan.id %}"
+            class="btn btn-primary rounded-pill mb-4 fw-bold">
+            Faça login para iniciar este plano
+        </a>
+        {% endif %}
     </div>
 
     {% if user.is_staff %}
@@ -45,7 +98,7 @@
                 {% endif %}
             </div>
 
-            <div id="week{{ week }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+            <div id="week{{ week }}" class="accordion-collapse collapse {% if week == next_week %}show{% endif %}"
                 data-bs-parent="#accordionPlan">
                 <div class="accordion-body p-0">
                     <div class="list-group list-group-flush">
@@ -69,27 +122,36 @@
 
 
 
-<div class="pe-2">
-    {% with first_chapter=task.chapters.first %}
-        {% if first_chapter %}
+                            <div class="pe-2">
+                                {% with first_chapter=task.chapters.first %}
+                                {% if first_chapter %}
 
-            {% if task.start_verse %}
-                <a href="{% url 'read_verse_range' first_chapter.book.id first_chapter.number task.start_verse task.end_verse %}"
-                   class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
-                    {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
-                </a>
-            {% else %}
-                <a href="{% url 'read_chapter' first_chapter.book.id first_chapter.number %}"
-                   class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
-                    {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
-                </a>
-            {% endif %}
+                                {% if task.start_verse %}
+                                <a href="{% url 'read_verse_range' first_chapter.book.id first_chapter.number task.start_verse task.end_verse %}"
+                                    class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
+                                    {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
+                                </a>
+                                {% else %}
+                                <a href="{% url 'read_chapter' first_chapter.book.id first_chapter.number %}"
+                                    class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
+                                    {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
+                                </a>
+                                {% endif %}
 
-        {% else %}
-            <span class="badge bg-warning text-dark">Sem capítulos</span>
-        {% endif %}
-    {% endwith %}
-</div>
+                                {% if user.is_authenticated and task.id not in user_completed_ids %}
+                                <form action="{% url 'complete_task' task.id %}" method="post" class="d-inline ms-2">
+                                    {% csrf_token %}
+                                    <button class="btn btn-success btn-sm rounded-pill px-3 fw-bold">
+                                        ✓ Concluir
+                                    </button>
+                                </form>
+                                {% endif %}
+
+                                {% else %}
+                                <span class="badge bg-warning text-dark">Sem capítulos</span>
+                                {% endif %}
+                                {% endwith %}
+                            </div>
 
 
                             {% if user.is_staff %}
@@ -139,7 +201,6 @@
         {% endfor %}
     </div>
 </div>
-
 <style>
     /* Estilos para manter a UI limpa */
     .accordion-button:not(.collapsed) {

@@ -4,3 +4,7 @@ from .plan_detail import *
 from .delete_plan import *
 from .delete_week import *
 from .delete_task import *
+from .start_plan import *
+from .edit_plan import *
+from .dashboard import *
+from .plan_users import *

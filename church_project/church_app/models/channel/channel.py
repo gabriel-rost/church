@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class Channel(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -7,7 +7,7 @@ class Channel(models.Model):
     description = models.TextField(blank=True, max_length=300)
     public = models.BooleanField(default=True, db_index=True)
     members = models.ManyToManyField(
-    User,
+    settings.AUTH_USER_MODEL,
     through="ChannelMember",
     related_name="channels"
     )

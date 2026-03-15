@@ -22,14 +22,14 @@
             <div class="card mb-3 shadow-sm">
                 <div class="card-body">
 
-                    {% if post.content.title %}
+                    {% if post.title %}
                         <h5 class="card-title">
-                            {{ post.content.title|highlight:query|safe }}
+                            {{ post.title|highlight:query|safe }}
                         </h5>
                     {% endif %}
 
                     <p class="card-text text-muted">
-                        {{ post.content.text|truncatechars:250|highlight:query|safe }}
+                        {{ post.text|truncatechars:250|highlight:query|safe }}
                     </p>
 
                     <div>

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class Like(models.Model):
     class ReactionType(models.TextChoices):
@@ -11,7 +11,7 @@ class Like(models.Model):
         ANGRY = 'angry', 'Grrr'
         PRAY = 'pray', 'Oração'
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="my_likes")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="my_likes")
     post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="interactions")
     type = models.CharField(
         max_length=10, 

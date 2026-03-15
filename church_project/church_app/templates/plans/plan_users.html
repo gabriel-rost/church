@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+<h2 class="fw-bold mb-4">
+👥 Usuários — {{ plan.title }}
+</h2>
+<a href="{% url 'plan_detail' plan.id %}" class="btn btn-outline-secondary btn-sm rounded-pill">
+Voltar ao Plano
+</a>
+</div>
+
+
+<div class="row g-4">
+
+<!-- Iniciaram -->
+
+<div class="col-md-6">
+
+<div class="card shadow-sm p-3">
+
+<h5 class="fw-bold mb-3">
+🚀 Iniciaram
+</h5>
+
+<ul class="list-group list-group-flush">
+
+{% for user in started_users %}
+
+<li class="list-group-item">
+
+{{ user.username }}
+
+</li>
+
+{% empty %}
+
+<li class="list-group-item text-muted">
+
+Nenhum usuário iniciou
+
+</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+</div>
+
+
+<!-- Não iniciaram -->
+
+<div class="col-md-6">
+
+<div class="card shadow-sm p-3">
+
+<h5 class="fw-bold mb-3">
+⏳ Não iniciaram
+</h5>
+
+<ul class="list-group list-group-flush">
+
+{% for user in not_started_users %}
+
+<li class="list-group-item">
+
+{{ user.username }}
+
+</li>
+
+{% empty %}
+
+<li class="list-group-item text-muted">
+
+Todos iniciaram
+
+</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

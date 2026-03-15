@@ -4,8 +4,8 @@ from .models import (
     Post,
     Archive,
     Comment,
-    Content,
-    Profile,
+    #Content,
+    User,
     Channel,
     ReadingPlan,
     PlanTask,
@@ -18,8 +18,8 @@ from .models import (
 admin.site.register(Post)
 admin.site.register(Archive)
 admin.site.register(Comment)
-admin.site.register(Content)
-admin.site.register(Profile)
+#admin.site.register(Content)
+admin.site.register(User)
 admin.site.register(Channel)
 admin.site.register(ReadingPlan)
 admin.site.register(PlanTask)

@@ -10,7 +10,7 @@ django.setup()
 from church_app.models.bible.book import Book, Chapter, Verse
 
 def run_import():
-    file_path = 'bible.json'
+    file_path = 'nvi.json'
     
     if not os.path.exists(file_path):
         print(f"Erro: Arquivo {file_path} não encontrado na raiz do projeto.")

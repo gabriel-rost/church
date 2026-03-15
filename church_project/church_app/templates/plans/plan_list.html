@@ -23,6 +23,12 @@
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>
+                <div class="position-absolute top-0 start-0 m-3">
+                    <button type="button" class="btn btn-warning btn-sm rounded-circle shadow" data-bs-toggle="tooltip"
+                        data-bs-placement="top" title="Editar Plano" onclick="window.location.href='{% url "edit_plan" plan.id %}'">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
                 {% endif %}
 
                 {% if plan.cover_image %}
