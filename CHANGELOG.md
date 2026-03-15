@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/gabriel-rost/church/compare/v1.5.0...v1.5.1) (2026-03-15)
+
+
+### Bug Fixes
+
+* **base.html:** adjust css ([0596aaf](https://github.com/gabriel-rost/church/commit/0596aaf7aec5359c70e131bd6e74e01b1cb051ca))
+
 # [1.5.0](https://github.com/gabriel-rost/church/compare/v1.4.0...v1.5.0) (2026-03-15)
 
 
