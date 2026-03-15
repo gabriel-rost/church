@@ -1,9 +1,9 @@
-from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Count
-
 from ...models import ReadingPlan, UserTaskProgress
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 def plan_users(request, plan_id):
 
