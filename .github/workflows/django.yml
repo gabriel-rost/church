@@ -40,4 +40,6 @@ jobs:
         VAPID_PRIVATE_KEY: "mock_private_key"
         VAPID_ADMIN_EMAIL: "mock@email.com"
       run: |
-        python manage.py test
+        pip install coverage
+        coverage run manage.py test church_app
+        coverage report
