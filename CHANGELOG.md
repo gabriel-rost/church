@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/gabriel-rost/church/compare/v1.3.1...v1.4.0) (2026-03-15)
+
+
+### Features
+
+* add GitHub Actions workflows for testing and coverage ([3c594e3](https://github.com/gabriel-rost/church/commit/3c594e3e38abddfcec0dbf1677f61391110898f7))
+
 ## [1.3.1](https://github.com/gabriel-rost/church/compare/v1.3.0...v1.3.1) (2026-02-24)
 
 
