@@ -43,3 +43,10 @@ jobs:
         pip install coverage
         coverage run manage.py test church_app
         coverage report
+        coverage xml
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: church_project/coverage.xml
