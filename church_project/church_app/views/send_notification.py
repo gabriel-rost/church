@@ -1,7 +1,8 @@
 import threading
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from django.contrib.auth.decorators import user_passes_test
 from webpush import send_user_notification
 from decouple import config
