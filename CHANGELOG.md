@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/gabriel-rost/church/compare/v1.5.1...v1.5.2) (2026-03-16)
+
+
+### Bug Fixes
+
+* use correctly User model ([3131011](https://github.com/gabriel-rost/church/commit/313101182dbfa2781a8bbd7bd1253c556ed6dd1a))
+
 ## [1.5.1](https://github.com/gabriel-rost/church/compare/v1.5.0...v1.5.1) (2026-03-15)
 
 
