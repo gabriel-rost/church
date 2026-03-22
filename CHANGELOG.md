@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/gabriel-rost/church/compare/v1.5.2...v1.6.0) (2026-03-22)
+
+
+### Features
+
+* Implement soft delete functionality for comments and posts ([5e3638a](https://github.com/gabriel-rost/church/commit/5e3638aee1434449ef64a57d0d837a7fccf54992))
+
 ## [1.5.2](https://github.com/gabriel-rost/church/compare/v1.5.1...v1.5.2) (2026-03-16)
 
 
