@@ -1,8 +1,8 @@
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, redirect
 from ...models import ReadingPlan, PlanTask
 
-@staff_member_required
+@permission_required('church_app.can_edit_reading_plan', raise_exception=True)
 def delete_week(request, plan_id, week_number):
     plan = get_object_or_404(ReadingPlan, id=plan_id)
     if request.method == 'POST':

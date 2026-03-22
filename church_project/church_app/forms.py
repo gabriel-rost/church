@@ -164,10 +164,28 @@ class PlanTaskForm(forms.ModelForm):
 
 from .models.bible.plantask import ReadingPlan
 class ReadingPlanForm(forms.ModelForm):
+    # Campo extra que não vai pro banco, mas controla a lógica do Signal/Service
+    send_notification = forms.BooleanField(
+        required=False, 
+        initial=True,
+        label="Notificar igreja ao publicar?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
     class Meta:
         model = ReadingPlan
-        fields = ['title', 'description', 'draft']
+        # Note que mudei 'draft' para 'is_published' se você seguiu a lógica anterior, 
+        # ou mantenha 'draft' se for seu booleano original.
+        fields = ['title', 'description', 'is_published', 'send_notification']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 21 Dias com os Salmos'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
+            'title': forms.TextInput(attrs={
+                'class': 'form-control rounded-pill px-4', 
+                'placeholder': 'Ex: 21 Dias com os Salmos'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control rounded-4', 
+                'rows': 3,
+                'placeholder': 'Uma breve introdução sobre esta jornada...'
+            }),
+            'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

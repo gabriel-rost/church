@@ -30,6 +30,10 @@
 
                     <p class="card-text text-muted">
                         {{ post.text|truncatechars:250|highlight:query|safe }}
+                    </p>Publicação de {{ post.user }}
+
+                    <p>
+
                     </p>
 
                     <div>
@@ -81,19 +85,19 @@
         <h3 class="mt-5 mb-3">Usuários</h3>
 
         <div class="list-group">
-            {% for profile in users %}
+            {% for user in users %}
                 <div class="list-group-item">
                     <strong>
-                        {{ profile.user.username|highlight:query|safe }}
+                        {{ user.username|highlight:query|safe }}
                     </strong>
 
-                    {% if profile.user.first_name or profile.user.last_name %}
+                    {% if user.first_name or profile.user.last_name %}
                         <div class="text-muted small">
-                            {{ profile.user.get_full_name }}
+                            {{ user.get_full_name }}
                         </div>
                     {% endif %}
                     <div>
-                        <a href="{% url 'profile_by_id' user_id=profile.user.id %}" class="btn btn-outline-primary btn-sm mt-2">
+                        <a href="{% url 'profile' username=user.username %}" class="btn btn-outline-primary btn-sm mt-2">
                             Ver Perfil
                         </a>
                     </div>

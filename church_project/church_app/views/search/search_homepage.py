@@ -5,6 +5,8 @@ from django.db.models import Q, Case, When, IntegerField
 from django.core.paginator import Paginator
 from church_app.models import Post
 from django.conf import settings
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 @login_required
 def search_homepage(request):
@@ -16,7 +18,7 @@ def search_results(request):
     filters = request.GET.getlist("filter")
 
     posts = Post.objects.none()
-    users = settings.AUTH_USER_MODEL.objects.none()
+    users = User.objects.none()
 
     if not query:
         return render(
@@ -45,10 +47,10 @@ def search_results(request):
         )
 
     # usuários
-    users_qs = settings.AUTH_USER_MODEL.objects.filter(
-        Q(user__username__icontains=query) |
-        Q(user__first_name__icontains=query) |
-        Q(user__last_name__icontains=query)
+    users_qs = User.objects.filter(
+        Q(username__icontains=query) |
+        Q(first_name__icontains=query) |
+        Q(last_name__icontains=query)
     )
 
     # ===== PAGINAÇÃO =====

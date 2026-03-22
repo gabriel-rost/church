@@ -12,7 +12,7 @@
         {{ plan.title }}
     </h6>
 
-    {% if user.is_staff %}
+    {% if perms.church_app.can_create_reading_plan %}
     <a href="{% url 'community_plan_dashboard' plan.id %}"
        class="btn btn-main btn-pill-sm">
 
@@ -38,11 +38,6 @@
         <div class="card-body p-4 text-white text-center">
             <h2 class="fw-bold mb-1">{{ plan.title }}</h2>
             <p class="opacity-75 mb-3">{{ plan.description }}</p>
-
-            {% if plan.draft %}
-            <p>RASCUNHO</p>
-            {% endif %}
-
             <div class="bg-white bg-opacity-25 rounded-pill p-1" style="height: 12px;">
                 <div class="bg-white rounded-pill h-100" style="width: {{ progress_percentage }}%; transition: 0.5s;">
                 </div>
@@ -70,7 +65,7 @@
         {% endif %}
     </div>
 
-    {% if user.is_staff %}
+    {% if perms.church_app.can_create_reading_plan %}
     <div class="d-grid mb-4">
         <a href="{% url 'admin_add_task' plan.id %}" class="btn btn-dark rounded-pill py-2 fw-bold">
             <i class="bi bi-plus-circle me-2"></i> Lançar Nova Leitura
@@ -90,7 +85,7 @@
                     </button>
                 </h2>
 
-                {% if user.is_staff %}
+                {% if perms.church_app.can_create_reading_plan %}
                 <button type="button" class="btn btn-link text-danger me-3 py-0" data-bs-toggle="modal"
                     data-bs-target="#deleteWeekModal{{ week }}">
                     <i class="bi bi-trash-fill fs-5"></i>
@@ -121,7 +116,7 @@
                             </div>
 
 
-
+                            {% if not plan.draft %}
                             <div class="pe-2">
                                 {% with first_chapter=task.chapters.first %}
                                 {% if first_chapter %}
@@ -129,7 +124,8 @@
                                 {% if task.start_verse %}
                                 <a href="{% url 'read_verse_range' first_chapter.book.id first_chapter.number task.start_verse task.end_verse %}"
                                     class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
-                                    {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
+                                    {% if task.id in user_completed_ids %}Revisar
+                                    {% else %}Ler agora{% endif %}
                                 </a>
                                 {% else %}
                                 <a href="{% url 'read_chapter' first_chapter.book.id first_chapter.number %}"
@@ -152,9 +148,10 @@
                                 {% endif %}
                                 {% endwith %}
                             </div>
+                            {% endif %}
 
 
-                            {% if user.is_staff %}
+                            {% if perms.church_app.can_create_reading_plan %}
                             <form action="{% url 'delete_task' task.id %}" method="post" class="d-inline ms-2">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-link text-danger p-0" title="Apagar esta leitura">
@@ -170,7 +167,7 @@
             </div>
         </div>
 
-        {% if user.is_staff %}
+        {% if perms.church_app.can_create_reading_plan %}
         <div class="modal fade" id="deleteWeekModal{{ week }}" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="modal-content" style="border-radius: 20px;">

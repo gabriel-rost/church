@@ -1,0 +1,74 @@
+{% extends "waitlist_base.html" %}
+
+{% block content %}
+<style>
+    /* Estilos específicos do card de espera */
+    .card-waitlist {
+        /* max-width impede que fique gigante no desktop */
+        max-width: 500px; 
+        /* width: 100% garante que ocupe a largura disponível no mobile */
+        width: 100%;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        background-color: #ffffff;
+    }
+    .icon-wrapper {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+    }
+    .status-badge {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 6px 12px;
+        border-radius: 50px;
+    }
+    
+    /* Ajuste fino para títulos em telas pequenas */
+    @media (max-width: 576px) {
+        .card-waitlist h2 {
+            font-size: 1.4rem;
+        }
+    }
+</style>
+
+<div class="card card-waitlist shadow-sm my-5">
+    <div class="card-body p-4 p-md-5 text-center">
+        
+        <div class="icon-wrapper">
+            🕊️
+        </div>
+
+        <span class="badge bg-light text-secondary status-badge mb-3">
+            Conta em Análise
+        </span>
+
+        <h2 class="fw-bold mb-3 text-dark">Bem-vindo, irmão {{ user.username }}!</h2>
+        
+        <p class="text-muted mb-4 fs-6">
+            Sua conta foi criada com sucesso e está em nossa <strong>lista de oração e análise</strong>.
+        </p>
+
+        <div class="alert alert-info border-0 shadow-sm mb-4" style="background-color: #f0f7ff;">
+            <small class="d-flex align-items-center justify-content-center text-start">
+                <i class="bi bi-info-circle me-2 fs-5"></i>
+                <span>Estamos liberando novos acessos gradualmente para manter a comunhão e a ordem.</span>
+            </small>
+        </div>
+
+        <p class="small text-secondary mb-5">
+            Você receberá um aviso assim que seu acesso às postagens for liberado.
+        </p>
+
+        <div class="d-grid gap-2">
+            <a href="/" class="btn btn-primary btn-lg rounded-pill py-3 fw-bold">
+                Verificar Aprovação
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-link text-decoration-none text-muted mt-2 small">
+                Sair da conta
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

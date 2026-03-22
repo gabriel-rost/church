@@ -8,3 +8,4 @@ from .start_plan import *
 from .edit_plan import *
 from .dashboard import *
 from .plan_users import *
+from .publish_plan import *

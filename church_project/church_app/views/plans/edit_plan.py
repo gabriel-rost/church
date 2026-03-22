@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import permission_required
 from ...models import ReadingPlan
 from ...forms import ReadingPlanForm
 
-@staff_member_required
+@permission_required('church_app.can_edit_reading_plan', raise_exception=True)
 def edit_plan(request, plan_id):
     plan = ReadingPlan.objects.get(id=plan_id)
 

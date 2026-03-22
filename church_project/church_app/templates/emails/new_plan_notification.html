@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; margin-top: 20px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <tr>
+            <td align="center" style="padding: 40px 0; background-color: #0d6efd;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">📖 Jornada de Leitura</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 40px;">
+                <h2 style="color: #333333; margin-top: 0;">Olá!</h2>
+                <p style="color: #666666; line-height: 1.6; font-size: 16px;">
+                    Um novo plano de leitura acaba de ser publicado em nossa comunidade:
+                </p>
+                <div style="background-color: #f8f9fa; border-left: 4px solid #0d6efd; padding: 20px; margin: 20px 0;">
+                    <strong style="display: block; font-size: 18px; color: #333333; margin-bottom: 10px;">{{ plan.title }}</strong>
+                    <p style="color: #666666; margin: 0; font-size: 14px;">{{ plan.description|truncatechars:150 }}</p>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="{{ url }}" style="background-color: #0d6efd; color: #ffffff; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px; display: inline-block;">
+                        Ver no Feed e Participar
+                    </a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 20px; background-color: #f8f9fa; color: #999999; font-size: 12px;">
+                © {{ church_name }} | Enviado via Church App
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -10,3 +10,4 @@ from .infinite_scroll import post_list as infinite_scroll_post_list
 from .toggle_like import toggle_like
 from .post_likers import post_likers
 from .share_verse import share_verse
+from .delete_comment import delete_comment

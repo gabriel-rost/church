@@ -1,7 +1,8 @@
 from django.db import models
 from django.conf import settings
+from ..soft_delete import SoftDeleteModel
 
-class Comment(models.Model):
+class Comment(SoftDeleteModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE

@@ -2,6 +2,7 @@ from django.db import models
 from church_app.models.bible.book import Chapter  # Importando seu modelo de capítulos
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -9,7 +10,26 @@ class ReadingPlan(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    draft = models.BooleanField(default=True)  # Indica se o plano está em rascunho ou publicado
+    #draft = models.BooleanField(default=True)  # Indica se o plano está em rascunho ou publicado
+    is_published = models.BooleanField(default=False)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    published_at = models.DateTimeField(null=True, blank=True)
+    notification_sent = models.BooleanField(default=False)
+
+    def publish(self):
+            if not self.is_published:
+                self.is_published = True
+                self.published_at = timezone.now()
+                self.save()
+                
+                # Lógica extra aqui:
+                # 1. Criar Postagem no Feed
+                # 2. Chamar função de Notificação
+
+    def get_absolute_url(self):
+        # Substitua 'plan_detail' pelo nome da sua rota no urls.py
+        # Se sua rota for path('plans/<int:plan_id>/', ...)
+        return reverse('plan_detail', kwargs={'plan_id': self.id})
 
     def __str__(self):
         return self.title

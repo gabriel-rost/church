@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'includes/_back_button.html' %}
+<div class="container mt-4">
+    
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div class="card border-0 shadow-sm rounded-pill px-3 py-2 bg-light">
+            <div class="d-flex align-items-center">
+                <div class="avatar-xs bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                    {{ request.user.username|first|upper }}
+                </div>
+                <div class="me-2">
+                    <small class="text-muted d-block" style="font-size: 0.7rem; line-height: 1;">Operador(a):</small>
+                    <span class="fw-bold small text-dark">{{ request.user.get_full_name|default:request.user.username }}</span>
+                </div>
+                <span class="badge bg-dark rounded-pill" style="font-size: 0.6rem;">
+                    {{ request.user.groups.all.0.name|default:"Admin" }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark h4 mb-1">Gerenciamento de Cargos</h2>
+        <p class="text-muted small">Defina quem pode moderar postagens e gerenciar a comunidade.</p>
+    </div>
+
+    <div class="row">
+        {% for member in members %}
+        <div class="col-md-6 col-xl-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
+                            <span class="fw-bold">{{ member.username|first|upper }}</span>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-truncate" style="max-width: 150px;">{{ member.get_full_name|default:member.username }}</h6>
+                            <small class="text-muted">{{ member.groups.all.0.name|default:"Membro Comum" }}</small>
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ member.id }}">
+                        <div class="input-group input-group-sm">
+                            <select name="group_id" class="form-select rounded-start-pill">
+                                <option value="">Membro Comum</option>
+                                {% for group in groups %}
+                                <option value="{{ group.id }}" {% if member.groups.all.0.id == group.id %}selected{% endif %}>
+                                    {{ group.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-dark rounded-end-pill px-3">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">Nenhum membro aprovado encontrado para gerenciar.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .hover-translate { transition: transform 0.2s ease; }
+    .hover-translate:hover { transform: translateX(-5px); }
+</style>
+{% endblock %}

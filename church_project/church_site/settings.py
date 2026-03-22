@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'church_app.middleware.GlobalAppMiddleware',
 ]
 
 ROOT_URLCONF = 'church_site.urls'
@@ -271,3 +272,5 @@ WEBPUSH_SETTINGS = {
 }
 
 AUTH_USER_MODEL = 'church_app.User'  # Formato: 'nome_do_app.NomeDoModelo'
+
+SITE_URL = config('SITE_URL')

@@ -19,6 +19,45 @@
 
     <p class="mb-2 text-break">{{ post.text|linebreaksbr|urlize }}</p>
 
+
+    {% if post.related_content %}
+    <div class="related-attachment mb-3">
+
+      {# CASO: PLANO DE LEITURA #}
+      {% if post.content_type.model == 'readingplan' %}
+      <div class="card border-0 bg-light rounded-4 overflow-hidden border">
+        <div class="d-flex">
+          <div class="bg-primary bg-gradient d-flex align-items-center justify-content-center"
+            style="width: 80px; min-height: 100px;">
+            <i class="bi bi-book-half text-white fs-3"></i>
+          </div>
+          <div class="p-3 flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <span class="badge bg-white text-primary rounded-pill mb-1 border shadow-sm"
+                  style="font-size: 0.65rem;">PLANO DE LEITURA</span>
+                <h6 class="fw-bold mb-1 text-dark">{{ post.related_content.title }}</h6>
+              </div>
+              <a href="{% url 'plan_detail' post.related_content.id %}"
+                class="btn btn-primary btn-sm rounded-pill px-3 fw-bold shadow-sm">
+                Participar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# CASO: VERSÍCULO (EXEMPLO FUTURO) #}
+      {% elif post.content_type.model == 'verse' %}
+      <div class="p-3 rounded-4 bg-white border-start border-primary border-4 shadow-sm italic-box">
+        <p class="fst-italic mb-1">"{{ post.related_content.text }}"</p>
+        <small class="fw-bold text-primary">— {{ post.related_content.reference }}</small>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+
     {% if post.images.all or post.attachments.all %}
     <div class="mt-2">
       

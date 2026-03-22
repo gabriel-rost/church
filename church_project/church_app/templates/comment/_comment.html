@@ -3,13 +3,26 @@
     <div class="d-flex align-items-start">
         <i class="bi bi-person-circle fs-6 me-2 text-secondary"></i>
         <div class="w-100">
-            <div class="d-flex align-items-center mb-1">
-                <strong class="me-2">{{ comment.user.username }}</strong>
-                <small class="text-muted">· {{ comment.date|date:"d/m/Y H:i" }}</small>
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <div class="d-flex align-items-center">
+                    <strong class="me-2">{{ comment.user.username }}</strong>
+                    <small class="text-muted">· {{ comment.date|date:"d/m/Y H:i" }}</small>
+                </div>
+
+                {% if user.is_authenticated and user.id == comment.user.id or perms.church_app.can_delete_comment %}
+                <form action="{% url 'delete_comment' comment.id %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link btn-sm text-danger p-0 text-decoration-none" 
+                            onclick="return confirm('Tem certeza que deseja apagar este comentário?')">
+                        <i class="bi bi-trash3"></i> <span style="font-size: 0.8rem;">Apagar</span>
+                    </button>
+                </form>
+                {% endif %}
             </div>
+
             <p class="mb-2 text-break small">{{ comment.text }}</p>
 
-            <button class="btn btn-link btn-sm text-primary p-0" type="button" onclick="toggleReplyForm({{ comment.id }})">
+            <button class="btn btn-link btn-sm text-primary p-0 text-decoration-none" type="button" onclick="toggleReplyForm({{ comment.id }})">
                 <i class="bi bi-reply-fill"></i> Responder
             </button>
         </div>
@@ -31,7 +44,7 @@
     {% if comment.replies.all %}
     <ul class="list-unstyled mt-2 ps-4">
         {% for reply in comment.replies.all %}
-            {% include "church_app/_comment.html" with comment=reply %}
+            {% include "church_app/_comment.html" with comment=reply user=user perms=perms %}
         {% endfor %}
     </ul>
     {% endif %}

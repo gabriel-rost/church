@@ -1,0 +1,57 @@
+<div class="col-12 col-md-6 col-lg-4">
+    <div class="card border-0 shadow-sm h-100 position-relative plan-card" style="border-radius: 20px;">
+        
+        {% if perms.church_app.can_edit_reading_plan %}
+        <div class="position-absolute top-0 end-0 m-3 d-flex gap-2" style="z-index: 10;">
+            <a href="{% url 'edit_plan' plan.id %}" class="btn btn-white btn-sm rounded-circle shadow-sm border">
+                <i class="bi bi-pencil text-warning"></i>
+            </a>
+            <button type="button" class="btn btn-white btn-sm rounded-circle shadow-sm border" data-bs-toggle="modal" data-bs-target="#deleteModal{{ plan.id }}">
+                <i class="bi bi-trash text-danger"></i>
+            </button>
+        </div>
+        {% endif %}
+
+        <div class="position-relative">
+            {% if plan.cover_image %}
+                <img src="{{ plan.cover_image.url }}" class="card-img-top" style="border-radius: 20px 20px 0 0; height: 160px; object-fit: cover;">
+            {% else %}
+                <div class="bg-primary bg-gradient d-flex align-items-center justify-content-center" style="height: 160px; border-radius: 20px 20px 0 0;">
+                    <i class="bi bi-book-half text-white fs-1 opacity-50"></i>
+                </div>
+            {% endif %}
+            
+            {% if is_draft %}
+            <span class="position-absolute bottom-0 start-0 m-3 badge bg-warning text-dark rounded-pill shadow-sm">
+                <i class="bi bi-pause-fill me-1"></i>Rascunho
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="card-body p-4 d-flex flex-column">
+            <h5 class="fw-bold text-dark">{{ plan.title }}</h5>
+            <p class="text-muted small flex-grow-1">{{ plan.description|truncatechars:85 }}</p>
+            
+            <div class="d-grid gap-2 mt-3">
+                <a href="{% url 'plan_detail' plan.id %}" class="btn btn-outline-primary rounded-pill fw-bold">
+                    {% if is_draft %}Revisar Conteúdo{% else %}Ver Progresso{% endif %}
+                </a>
+                
+                {% if is_draft and perms.church_app.can_edit_reading_plan %}
+                <form action="{% url 'publish_plan' plan.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold">
+                        <i class="bi bi-megaphone me-2"></i>Publicar Agora
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .plan-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .plan-card:hover { transform: translateY(-5px); box-shadow: 0 1rem 3rem rgba(0,0,0,.1) !important; }
+    .btn-white { background: white; }
+</style>

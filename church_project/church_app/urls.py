@@ -50,5 +50,11 @@ urlpatterns = [
     path('task/<int:task_id>/complete/',views.complete_task, name='complete_task'),
     path('plans/<int:plan_id>/continue/',views.continue_plan, name='continue_plan'),
     path('dashboard/plans/<int:plan_id>/community/', views.community_plan_dashboard,name="community_plan_dashboard"),
-    path('plans/<int:plan_id>/users/', views.plan_users, name='plan_users')
+    path('plans/<int:plan_id>/users/', views.plan_users, name='plan_users'),
+    path('manage/users/', views.manage_users, name='manage_users'),
+    path('wait/', views.waitlist_status, name='waitlist_status'),
+    path('approve_members', views.approve_members, name='approve_members'),
+    path('manage_permissions', views.manage_permissions, name='manage_permissions'),
+    path('plans/publish/<int:plan_id>/', views.publish_plan, name='publish_plan'),
+    path('delete_comment/<int:comment_id>', views.delete_comment, name='delete_comment'),
 ]

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Clube de Leitura{% endblock %}</title>
+
+  <link rel="shortcut icon" href="https://api.iconify.design/token-branded:blue.svg" type="image/x-icon">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    /* 1. Reset e Palco Centralizado */
+    html, body {
+      height: 100%;
+      margin: 0;
+      background-color: #f8f9fa;
+    }
+
+    body {
+      display: flex;
+      align-items: center; /* Centraliza verticalmente */
+      justify-content: center; /* Centraliza horizontalmente */
+      padding: 15px; /* Padding de segurança para mobile */
+    }
+
+    /* 2. Logo Minimalista Fixado no topo */
+    .simple-logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #0d6efd;
+      text-decoration: none;
+      z-index: 10;
+    }
+
+    /* Ajuste do logo para telas muito pequenas */
+    @media (max-width: 350px) {
+      .simple-logo {
+        font-size: 1rem;
+        top: 10px;
+        left: 10px;
+      }
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+  <a href="/" class="simple-logo">
+    <i class="bi bi-book-half me-2"></i> Clube de Leitura
+  </a>
+
+  <main class="w-100">
+    <div class="container d-flex justify-content-center">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

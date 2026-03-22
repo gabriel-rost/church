@@ -8,3 +8,4 @@ from .bible import *
 from .plans import *
 from .send_notification import *
 from .search.search_homepage import *
+from .admin_custom import *

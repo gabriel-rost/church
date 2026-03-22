@@ -17,14 +17,6 @@
             <textarea class="form-control" id="description" name="description" rows="3">{{ plan.description }}</textarea>
         </div>
 
-        <div>
-            <label for="draft" class="form-label">Status do Plano</label>
-            <select class="form-select" id="draft" name="draft">
-                <option value="True" {% if plan.draft %}selected{% endif %}>Rascunho</option>
-                <option value="False" {% if not plan.draft %}selected{% endif %}>Publicado</option>
-            </select>
-        </div>
-
         <!-- <div class="mb-3">
             <label for="cover_image" class="form-label">Imagem de Capa</label>
             <input type="file" class="form-control" id="cover_image" name="cover_image">
