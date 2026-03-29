@@ -10,7 +10,6 @@ class ReadingPlan(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    #draft = models.BooleanField(default=True)  # Indica se o plano está em rascunho ou publicado
     is_published = models.BooleanField(default=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     published_at = models.DateTimeField(null=True, blank=True)
