@@ -25,6 +25,14 @@ def plan_detail(request, plan_id):
 
     plan = get_object_or_404(ReadingPlan, id=plan_id)
 
+    # Verifica se o plano não está publicado
+    if not plan.is_published:
+        # Se o usuário NÃO for superusuário E NÃO tiver a permissão específica
+        if not request.user.has_perm('church_app.can_edit_reading_plan'):
+            # Você pode retornar um 404 ou 403 (Permission Denied)
+            from django.core.exceptions import PermissionDenied
+            raise PermissionDenied("Você não tem permissão para visualizar este plano rascunho.")
+
     tasks = plan.tasks.all()
 
     weeks = {}
