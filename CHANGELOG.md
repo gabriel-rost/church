@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/gabriel-rost/church/compare/v1.6.0...v1.7.0) (2026-03-30)
+
+
+### Features
+
+* Update ReadingPlan model and enhance create_plan view with post creation and notifications ([1decdf4](https://github.com/gabriel-rost/church/commit/1decdf4f724c8ac185eb446fad64a7ca0f320193))
+
 # [1.6.0](https://github.com/gabriel-rost/church/compare/v1.5.2...v1.6.0) (2026-03-22)
 
 
