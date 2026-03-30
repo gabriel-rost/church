@@ -39,6 +39,7 @@ jobs:
         VAPID_PUBLIC_KEY: "mock_public_key"
         VAPID_PRIVATE_KEY: "mock_private_key"
         VAPID_ADMIN_EMAIL: "mock@email.com"
+        SITE_URL: "127.0.0.1"
       run: |
         pip install coverage
         coverage run manage.py test church_app
