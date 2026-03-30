@@ -46,6 +46,15 @@
         </div>
     </div>
 
+{% if related_post %}
+<div class="d-grid mb-4">
+    <a href="{% url 'post_detail' related_post.id %}" class="btn btn-light shadow-sm rounded-pill py-2 fw-bold text-primary border">
+        <i class="bi bi-chat-left-text-fill me-2"></i> 
+        Discussão da Comunidade
+    </a>
+</div>
+{% endif %}
+
     <div>
         {% if user.is_authenticated %}
         {% if progress_percentage %}
