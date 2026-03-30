@@ -1,43 +1,82 @@
 <div class="mb-3">
-    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-        {{ field.label }}
-    </label>
-    
-    {% if field.field.widget.input_type == 'textarea' %}
-        <textarea name="{{ field.name }}" 
-                  id="{{ field.id_for_label }}" 
-                  class="form-control {% if field.errors %}is-invalid{% endif %}" 
-                  rows="3" 
-                  placeholder="{{ field.label }}">{{ field.value|default_if_none:'' }}</textarea>
-    
-    {% elif field.field.widget.input_type == 'checkbox' %}
-        <div class="form-check">
-            <input type="checkbox" 
-                   name="{{ field.name }}" 
-                   id="{{ field.id_for_label }}" 
-                   class="form-check-input {% if field.errors %}is-invalid{% endif %}"
-                   {% if field.value %}checked{% endif %}>
-            <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {# Área de Foto de Perfil #}
+    {% if field.name == "avatar_upload" %}
+        <div class="text-center mb-3">
+            <div class="position-relative d-inline-block">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.file.url }}" id="avatar-preview" 
+                         class="rounded-circle border border-3 border-light shadow-sm" 
+                         style="width: 120px; height: 120px; object-fit: cover;">
+                {% else %}
+                    <div id="avatar-placeholder" class="rounded-circle bg-secondary d-flex align-items-center justify-content-center border border-3 border-light shadow-sm" 
+                         style="width: 120px; height: 120px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="white" class="bi bi-person-fill" viewBox="0 0 16 16">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                        </svg>
+                    </div>
+                    <img src="" id="avatar-preview" class="rounded-circle border border-3 border-light shadow-sm d-none" 
+                         style="width: 120px; height: 120px; object-fit: cover;">
+                {% endif %}
+            </div>
+
+            {# Checkbox de Remoção (só aparece se o usuário já tiver foto) #}
+            {% if user.avatar %}
+            <div class="form-check d-flex justify-content-center mt-2">
+                <input class="form-check-input me-2" type="checkbox" name="remove_avatar" id="id_remove_avatar">
+                <label class="form-check-label text-danger small fw-bold" for="id_remove_avatar">
+                    Remover foto
+                </label>
+            </div>
+            {% endif %}
         </div>
-    
-    {% else %}
-        <input type="{{ field.field.widget.input_type }}" 
-               name="{{ field.name }}" 
-               id="{{ field.id_for_label }}" 
-               class="form-control {% if field.errors %}is-invalid{% endif %}" 
-               placeholder="{{ field.label }}"
-               value="{{ field.value|default_if_none:'' }}"
-               {% if field.field.required %}required{% endif %}>
-    
     {% endif %}
-    
-    {% if field.help_text %}
-        <div class="form-text text-muted">{{ field.help_text }}</div>
+
+    {# Renderização padrão dos outros campos (ignore o campo remove_avatar no loop) #}
+    {% if field.name != "remove_avatar" %}
+        <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+            {{ field.label }}
+        </label>
+        
+        {% if field.field.widget.input_type == 'textarea' %}
+            <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control" rows="3">{{ field.value|default_if_none:"" }}</textarea>
+        {% elif field.field.widget.input_type == 'checkbox' %}
+            <div class="form-check">
+                <input type="checkbox" name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-check-input" {% if field.value %}checked{% endif %}>
+                <label class="form-check-label">{{ field.label }}</label>
+            </div>
+        {% else %}
+            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}"
+                   class="form-control {% if field.name == 'avatar_upload' %}image-picker{% endif %}"
+                   value="{% if field.value %}{% if field.field.widget.input_type == 'date' %}{{ field.value|date:'Y-m-d' }}{% else %}{{ field.value }}{% endif %}{% endif %}">
+        {% endif %}
     {% endif %}
-    
-    {% for error in field.errors %}
-        <div class="invalid-feedback d-block small mt-1">
-            {{ error }}
-        </div>
-    {% endfor %}
 </div>
+
+<script>
+    // Preview de nova imagem
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.classList.contains('image-picker')) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const preview = document.getElementById('avatar-preview');
+                const placeholder = document.getElementById('avatar-placeholder');
+                if (preview) { preview.src = event.target.result; preview.classList.remove('d-none'); }
+                if (placeholder) { placeholder.classList.add('d-none'); }
+                // Se o usuário escolher uma foto, desmarca o "Remover"
+                const removeCheck = document.getElementById('id_remove_avatar');
+                if (removeCheck) removeCheck.checked = false;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        // Se marcar "Remover", podemos dar um feedback visual (opcional)
+        if (e.target && e.target.id === 'id_remove_avatar') {
+            const preview = document.getElementById('avatar-preview');
+            if (e.target.checked) {
+                preview.style.opacity = "0.3"; // Escurece para mostrar que será removida
+            } else {
+                preview.style.opacity = "1";
+            }
+        }
+    });
+</script>

@@ -66,13 +66,36 @@ class UserProfileForm(forms.ModelForm):
     # Campo para upload manual (não está no banco de dados)
     avatar_upload = forms.ImageField(required=False, label="Alterar Foto de Perfil")
 
+    remove_avatar = forms.BooleanField(required=False, label="Remover foto atual")
+
     class Meta:
         model = User # Agora aponta para o seu Custom User
         fields = ["first_name", "last_name", "email", "bio", "phone", "location", "birth_date"]
+        labels = {
+            "first_name": "Nome",
+            "last_name": "Sobrenome",
+            "email": "E-mail",
+            "bio": "Biografia",
+            "phone": "Telefone",
+            "location": "Localização",
+            "birth_date": "Data de Nascimento",
+        }
+        widgets = {
+            'birth_date': forms.DateInput(
+                format='%Y-%m-%d', # Formato ISO obrigatório para o browser
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control' # Opcional: já ajuda o Bootstrap
+                }
+            ),
+        }
 
     def save(self, commit=True):
         # O 'profile' aqui é, na verdade, a instância do seu Usuário
         user_instance = super().save(commit=False)
+        
+        if self.cleaned_data.get("remove_avatar"):
+            user_instance.avatar = None
 
         avatar_file = self.cleaned_data.get("avatar_upload")
         if avatar_file:
