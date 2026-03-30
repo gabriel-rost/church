@@ -1,3 +1,18 @@
+# [1.8.0](https://github.com/gabriel-rost/church/compare/v1.7.0...v1.8.0) (2026-03-30)
+
+
+### Bug Fixes
+
+* add permission check for unpublished reading plans ([6b7a53e](https://github.com/gabriel-rost/church/commit/6b7a53e38e0020d41732561ff5f8cdbd83393b78))
+* remove title from sidebar header in base template ([c0d41a8](https://github.com/gabriel-rost/church/commit/c0d41a8828977d461c287bd7824ffb11238b3441))
+* update profile links to use request.user for consistency ([3172533](https://github.com/gabriel-rost/church/commit/31725338c109e38b030d9cfa037ad8e1332c02e8))
+
+
+### Features
+
+* add related post section to plan detail view ([33825aa](https://github.com/gabriel-rost/church/commit/33825aa0c8695607cdb2f191989070856c5c0f77))
+* enhance user profile form with avatar removal option and improved field labels ([bc4fa40](https://github.com/gabriel-rost/church/commit/bc4fa4070418b9e2c63762c723a820a4f3b04f92))
+
 # [1.7.0](https://github.com/gabriel-rost/church/compare/v1.6.0...v1.7.0) (2026-03-30)
 
 
