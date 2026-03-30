@@ -6,7 +6,7 @@ from django.http import HttpResponse
 @login_required
 def start_plan(request, plan_id):
 
-    plan = get_object_or_404(ReadingPlan, id=plan_id, draft=False)
+    plan = get_object_or_404(ReadingPlan, id=plan_id)
 
     plan_progress, created = UserPlanProgress.objects.get_or_create(
         user=request.user,
