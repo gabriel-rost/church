@@ -1,0 +1,26 @@
+{% for post in posts %}
+    <div class="card mb-3 shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-body p-4">
+            {% if post.title %}
+                <h5 class="fw-bold text-dark mb-2">{{ post.title }}</h5>
+            {% endif %}
+            
+            <p class="text-muted mb-3">{{ post.text|truncatechars:200 }}</p>
+
+            {% if post.related_content %}
+                <div class="p-2 bg-light rounded border-start border-primary border-4 mb-3 small">
+                    <i class="bi bi-link-45deg"></i> Conteúdo relacionado anexado
+                </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                <small class="text-muted"><i class="bi bi-calendar3 me-1"></i> {{ post.date|date:"d/m/Y" }}</small>
+                <a href="{{ post.get_absolute_url }}" class="btn btn-link btn-sm text-decoration-none fw-bold">Ver mais</a>
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <div class="text-center py-4">
+        <p class="text-muted small italic">Este usuário ainda não fez publicações públicas.</p>
+    </div>
+{% endfor %}
