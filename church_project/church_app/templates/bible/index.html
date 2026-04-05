@@ -17,25 +17,37 @@
                     <div class="col-md-4">
                         <select class="form-select rounded-pill border-0" id="book_id" required>
                             <option value="" selected disabled>Livro...</option>
-                            {% for book in old_testament %}
-                            <option value="{{ book.id }}">{{ book.name }}</option>
-                            {% endfor %}
-                            {% for book in new_testament %}
-                            <option value="{{ book.id }}">{{ book.name }}</option>
-                            {% endfor %}
+                            <optgroup label="Antigo Testamento">
+                                {% for book in old_testament %}
+                                <option value="{{ book.id }}">{{ book.name }}</option>
+                                {% endfor %}
+                            </optgroup>
+                            <optgroup label="Novo Testamento">
+                                {% for book in new_testament %}
+                                <option value="{{ book.id }}">{{ book.name }}</option>
+                                {% endfor %}
+                            </optgroup>
                         </select>
                     </div>
+
                     <div class="col-md-2">
-                        <input type="number" class="form-control rounded-pill border-0" id="chapter" placeholder="Cap.">
+                        <select class="form-select rounded-pill border-0" id="chapter" disabled required>
+                            <option value="">Cap.</option>
+                        </select>
                     </div>
+
                     <div class="col-md-2">
-                        <input type="number" class="form-control rounded-pill border-0" id="verse_start"
-                            placeholder="De">
+                        <select class="form-select rounded-pill border-0" id="verse_start" disabled>
+                            <option value="">De</option>
+                        </select>
                     </div>
+
                     <div class="col-md-2">
-                        <input type="number" class="form-control rounded-pill border-0" id="verse_end"
-                            placeholder="Até">
+                        <select class="form-select rounded-pill border-0" id="verse_end" disabled>
+                            <option value="">Até</option>
+                        </select>
                     </div>
+
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary rounded-pill w-100">Ir para o texto</button>
                     </div>
@@ -116,6 +128,77 @@
             window.location.href = url;
         }
     });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const bookSelect = document.getElementById('book_id');
+    const chapterSelect = document.getElementById('chapter');
+    const verseStart = document.getElementById('verse_start');
+    const verseEnd = document.getElementById('verse_end');
+
+    // Função auxiliar para resetar e popular um select
+    const populateSelect = (selectElement, count, label) => {
+        selectElement.innerHTML = `<option value="">${label}</option>`;
+        for (let i = 1; i <= count; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            selectElement.appendChild(option);
+        }
+        selectElement.disabled = false;
+    };
+
+    // 1. Mudança de Livro -> Popula Capítulos
+    bookSelect.addEventListener('change', function() {
+        const bookId = this.value;
+        
+        // Reseta campos dependentes
+        chapterSelect.disabled = true;
+        verseStart.disabled = true;
+        verseEnd.disabled = true;
+        chapterSelect.innerHTML = '<option value="">Carregando...</option>';
+
+        fetch(`/api/chapters/${bookId}/`)
+            .then(response => response.json())
+            .then(data => {
+                populateSelect(chapterSelect, data.chapters, 'Cap.');
+            });
+    });
+
+    // 2. Mudança de Capítulo -> Popula Versículos
+    chapterSelect.addEventListener('change', function() {
+        const bookId = bookSelect.value;
+        const chapter = this.value;
+
+        if (!chapter) return;
+
+        verseStart.innerHTML = '<option value="">...</option>';
+        verseEnd.innerHTML = '<option value="">...</option>';
+
+        fetch(`/api/verses/${bookId}/${chapter}/`)
+            .then(response => response.json())
+            .then(data => {
+                populateSelect(verseStart, data.verses, 'De');
+                populateSelect(verseEnd, data.verses, 'Até');
+            });
+    });
+
+    // 3. Submissão do formulário
+    document.getElementById('quickSearchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const book = bookSelect.value;
+        const cap = chapterSelect.value;
+        const v1 = verseStart.value;
+        const v2 = verseEnd.value;
+
+        // Exemplo de URL: /biblia/genesis/1/1-5/
+        let url = `/bible/${book}/${cap}/`;
+        if (v1) {
+            url += v2 ? `${v1}/${v2}/` : `${v1}/`;
+        }
+        
+        window.location.href = url;
+    });
+});
 </script>
 
 <style>

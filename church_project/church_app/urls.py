@@ -57,4 +57,6 @@ urlpatterns = [
     path('manage_permissions', views.manage_permissions, name='manage_permissions'),
     path('plans/publish/<int:plan_id>/', views.publish_plan, name='publish_plan'),
     path('delete_comment/<int:comment_id>', views.delete_comment, name='delete_comment'),
+    path('api/chapters/<int:book_id>/', views.get_chapters, name='get_chapters'),
+    path('api/verses/<int:book_id>/<int:chapter>/', views.get_verses_count, name='get_verses_count'),
 ]

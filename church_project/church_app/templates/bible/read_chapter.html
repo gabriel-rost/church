@@ -2,55 +2,130 @@
 
 {% block content %}
 <div class="row justify-content-center mb-5">
-    <div class="col-12 col-md-8 col-lg-6">
+    <div class="col-12 col-md-8 col-lg-7">
         
         <div class="d-flex align-items-center mb-4">
-            <a href="{% url 'bible_home' %}" class="btn btn-light rounded-circle me-3">
+            <a href="{% url 'bible_home' %}" class="btn btn-light rounded-circle me-3 shadow-sm border-0">
                 <i class="bi bi-arrow-left"></i>
             </a>
-            <div>
-                <h6 class="text-muted mb-0">{{ book.name }}</h6>
-                <h3 class="fw-bold mb-0">Capítulo {{ chapter.number }}</h3>
+            <div class="flex-grow-1">
+                <h6 class="text-muted mb-0 text-uppercase small fw-bold" style="letter-spacing: 1px;">{{ book.name }}</h6>
+                
+                <div class="dropdown">
+                    <h3 class="fw-bold mb-0 dropdown-toggle d-inline-block" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Capítulo {{ chapter.number }} <i class="bi bi-chevron-down fs-6 ms-1 text-primary"></i>
+                    </h3>
+                    <div class="dropdown-menu border-0 shadow-lg p-3 mt-2" style="width: 280px; border-radius: 15px;">
+                        <h6 class="dropdown-header px-1">Ir para o capítulo:</h6>
+                        <div class="d-flex flex-wrap gap-2 pt-2">
+                            {% for c in all_chapters %}
+                                <a href="{% url 'read_chapter' book.id c.number %}" 
+                                   class="btn btn-sm {% if c.number == chapter.number %}btn-primary{% else %}btn-outline-light text-dark border{% endif %}" 
+                                   style="width: 45px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                   {{ c.number }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm p-4" style="border-radius: 20px; background: #fff;">
-            <div class="bible-text" style="font-size: 1.15rem; line-height: 1.8; color: #2d3436;">
+        <div class="card border-0 shadow-sm p-4 p-md-5 mb-4" style="border-radius: 24px; background: #ffffff;">
+            <div id="bible-content" class="bible-text">
                 {% for verse in verses %}
-                    <span class="d-inline">
-                        <sup class="text-primary fw-bold me-1" style="font-size: 0.7rem;">{{ verse.number }}</sup>
-                        {{ verse.text }}
+                    <span class="verse-item" id="v{{ verse.number }}">
+                        <sup class="text-primary fw-bold me-1">{{ verse.number }}</sup>{{ verse.text }}
                     </span>
                 {% endfor %}
             </div>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mt-4 px-2">
-            {% if prev_chapter %}
-                <a href="{% url 'read_chapter' book.id prev_chapter.number %}" class="btn btn-outline-primary rounded-pill px-4">
-                    <i class="bi bi-chevron-left"></i> Anterior
-                </a>
-            {% else %}
-                <div></div>
-            {% endif %}
+        <div class="d-flex justify-content-between align-items-center mt-5 px-2">
+            
+            <div class="navigation-left">
+                {% if prev_chapter %}
+                    <a href="{% url 'read_chapter' book.id prev_chapter.number %}" class="btn btn-outline-dark rounded-pill px-4 py-2 border-2 fw-bold">
+                        <i class="bi bi-chevron-left me-1"></i> Cap. {{ prev_chapter.number }}
+                    </a>
+                {% elif prev_book %}
+                    {% with last_cap=prev_book.chapters.all.last %}
+                        <a href="{% url 'read_chapter' prev_book.id last_cap.number %}" class="text-muted text-decoration-none small fw-bold">
+                            <i class="bi bi-arrow-left-short"></i> {{ prev_book.name }} (Cap. {{ last_cap.number }})
+                        </a>
+                    {% endwith %}
+                {% endif %}
+            </div>
 
-            {% if next_chapter %}
-                <a href="{% url 'read_chapter' book.id next_chapter.number %}" class="btn btn-primary rounded-pill px-4">
-                    Próximo <i class="bi bi-chevron-right"></i>
-                </a>
-            {% endif %}
+            <div class="navigation-right">
+                {% if next_chapter %}
+                    <a href="{% url 'read_chapter' book.id next_chapter.number %}" class="btn btn-primary rounded-pill px-4 py-2 shadow fw-bold">
+                        Cap. {{ next_chapter.number }} <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
+                {% elif next_book %}
+                    <a href="{% url 'read_chapter' next_book.id 1 %}" class="btn btn-success rounded-pill px-4 py-2 shadow fw-bold border-0" 
+                       style="background: linear-gradient(45deg, #2ecc71, #27ae60);">
+                        Começar {{ next_book.name }} <i class="bi bi-journal-check ms-2"></i>
+                    </a>
+                {% else %}
+                    <span class="badge bg-light text-dark p-2 rounded-pill">Fim da Bíblia</span>
+                {% endif %}
+            </div>
+
         </div>
 
     </div>
 </div>
 
 <style>
-    /* Estilo para simular papel ou leitura confortável */
-    body { background-color: #f8f9fa; }
+    body { background-color: #f4f7f6; }
+    
     .bible-text {
+        font-family: 'Georgia', serif;
+        font-size: 1.25rem;
+        line-height: 2;
+        color: #2d3436;
         text-align: justify;
-        font-family: 'Georgia', serif; /* Fontes com serifa são melhores para leitura longa */
     }
-    sup { top: -0.5em; }
+
+    sup { 
+        top: -0.4em; 
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .verse-item {
+        margin-right: 4px;
+        transition: background 0.3s;
+        border-radius: 4px;
+        padding: 2px 0;
+    }
+
+    .verse-item:hover {
+        background-color: #f0f7ff;
+    }
+
+    /* Customização do Dropdown scroll */
+    .dropdown-menu {
+        max-height: 350px;
+        overflow-y: auto;
+    }
+
+    .dropdown-menu::-webkit-scrollbar { width: 6px; }
+    .dropdown-menu::-webkit-scrollbar-thumb {
+        background: #e0e0e0;
+        border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .bible-text {
+            font-size: 1.15rem;
+            line-height: 1.8;
+        }
+        .navigation-right .btn {
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+        }
+    }
 </style>
 {% endblock %}
