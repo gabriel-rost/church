@@ -1,3 +1,18 @@
+# [1.9.0](https://github.com/gabriel-rost/church/compare/v1.8.0...v1.9.0) (2026-04-05)
+
+
+### Bug Fixes
+
+* correct post attribute references in home template ([5c71df1](https://github.com/gabriel-rost/church/commit/5c71df1f859bea0c568aac0fc8100d8d8ae2261a))
+
+
+### Features
+
+* enhance verse display with improved sharing options and dynamic content ([6e84ea8](https://github.com/gabriel-rost/church/commit/6e84ea865c6b4608d1de8f54db20c2ca0b91eba6))
+* implement AJAX loading of user posts on profile page with partial template rendering ([6d7f078](https://github.com/gabriel-rost/church/commit/6d7f078d7645fb69313f6cd6c6740d4a6f75c9fb))
+* implement chapter and verse selection with API integration for dynamic content loading ([30ecb6d](https://github.com/gabriel-rost/church/commit/30ecb6d0d5312b55edbdeab0b665c4d42a28d916))
+* redesign search homepage and results layout with enhanced user experience and filtering options ([c7e8fa7](https://github.com/gabriel-rost/church/commit/c7e8fa771cb5c9e15de3c05e08797ef07f0b0351))
+
 # [1.8.0](https://github.com/gabriel-rost/church/compare/v1.7.0...v1.8.0) (2026-03-30)
 
 
