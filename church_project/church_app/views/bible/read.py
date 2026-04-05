@@ -22,7 +22,7 @@ def read_verse(request, book_id, chapter_number, verse_number_firth, verse_numbe
     # Ex.: Genesis 1:1-2
     verses = Verse.objects.filter(chapter=chapter, number__gte=verse_number_firth, number__lte=verse_number_second)
 
-    print(verses.values())
+    #print(verses.values())
 
     context = {
         'book': book,

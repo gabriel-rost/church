@@ -88,9 +88,37 @@
         </div>
     </div>
     
-    <h2 class="mt-5 mb-3">Últimas Publicações de {{ user.username }}</h2>
-    <p class="text-muted">Implementar um loop aqui para mostrar os posts do usuário.</p>
+<h2 class="mt-5 mb-3 fw-bold">Últimas Publicações de {{ user.username }}</h2>
+
+<div id="user-posts-container">
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="text-muted mt-2">Buscando publicações...</p>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const container = document.getElementById('user-posts-container');
+    const username = "{{ user.username }}"; // O Django injeta o username aqui
+
+    // Chamada Ajax simples usando Fetch API
+    fetch(`/posts/user/${username}/ajax/`)
+        .then(response => response.json())
+        .then(data => {
+            // Injeta o HTML retornado pela view
+            container.innerHTML = data.html;
+        })
+        .catch(error => {
+            console.error('Erro ao carregar posts:', error);
+            container.innerHTML = '<p class="text-danger">Erro ao carregar publicações.</p>';
+        });
+});
+</script>
     
+
 </div>
 
 <style>
