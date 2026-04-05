@@ -1,65 +1,106 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary">{{ book.name }}, Capítulo: {{ chapter.number }}</h2>
-    </div>
-
-    <div>
-        Compartilhar:
-        <a href="https://api.whatsapp.com/send?text={{ book.name }} {{ chapter.number }}:{{ verse.number }} - {{ request.build_absolute_uri }}" target="_blank" class="me-2">
-            <i class="bi bi-whatsapp fs-4 text-success"></i>
-        </a>
-
-        <a href="{% url 'share_verse' %}?text={{ book.name }} Capítulo: {{ chapter.number }} versículo(s): {{ verses.first.number }}-{{ verses.last.number }} {{ request.build_absolute_uri }}"
-            class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-share-fill me-1"></i>
-            Compartilhar
-        </a>
-
-    </div>
-
-    <div class="" id="verses">
-        Versículo(s):
-        {% if verses != null %}
-            {{ verses.first.number }} - {{ verses.last.number }}
-        {% else %}
-            {{ verse.number }}
-        {% endif %}
-    </div>
-
-    <div class="card shadow-sm border-0 p-4" style="border-radius: 15px;">
-        {% if verses != null%}
-            {% for verse in verses %}
-                <div class="bible-text" style="font-size: 1.1rem; line-height: 1.8;">
-                    <span class="text-muted
-    small fw-bold me-1">{{ verse.number }}</span>
-                    <span class="me-2">{{ verse.text }}</span>
-                </div>
-            {% endfor %}
-        {% else %}
-        <div class="bible-text" style="font-size: 1.1rem; line-height: 1.8;">
-                <span class="text-muted small fw-bold me-1">{{ verse.number }}</span>
-                <span class="me-2">{{ verse.text }}</span>
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-12 col-md-10 col-lg-8">
+        
+        <div class="d-flex justify-content-between align-items-end mb-4 px-2">
+            <div>
+                <h6 class="text-primary fw-bold text-uppercase mb-1" style="letter-spacing: 1px;">{{ book.name }}</h6>
+                <h2 class="fw-bold mb-0">
+                    {{ chapter.number }}:{% if verses %}{{ verses.first.number }}-{{ verses.last.number }}{% else %}{{ verse.number }}{% endif %}
+                </h2>
+            </div>
+            <a href="{% url 'read_chapter' book.id chapter.number %}" class="btn btn-outline-primary rounded-pill btn-sm px-3">
+                <i class="bi bi-book me-1"></i> Ler capítulo completo
+            </a>
         </div>
-        {% endif %}
+
+        <div class="card shadow-sm border-0 p-4 p-md-5 mb-4" style="border-radius: 20px; border-left: 5px solid #0d6efd !important;">
+            <div id="share-content">
+                {% if verses %}
+                    {% for v in verses %}
+                        <p class="bible-text mb-3" style="font-size: 1.25rem; line-height: 1.8; color: #2d3436;">
+                            <sup class="text-muted fw-bold me-1">{{ v.number }}</sup> {{ v.text }}
+                        </p>
+                    {% endfor %}
+                {% else %}
+                    <p class="bible-text mb-0" style="font-size: 1.25rem; line-height: 1.8; color: #2d3436;">
+                        <sup class="text-muted fw-bold me-1">{{ verse.number }}</sup> {{ verse.text }}
+                    </p>
+                {% endif %}
+            </div>
+            
+            <hr class="my-4 opacity-10">
+
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="d-flex gap-2">
+                    <button onclick="copyToClipboard()" class="btn btn-light rounded-pill px-3 text-dark">
+                        <i class="bi bi-clipboard me-1"></i> Copiar
+                    </button>
+                    <button onclick="shareLink('{{ book.name }} {{ chapter.number }}', '{{ request.build_absolute_uri }}')" class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-share me-1"></i> Compartilhar
+                    </button>
+                </div>
+                
+                <div class="share-icons">
+                    <span class="small text-muted me-2">Direto:</span>
+                    <a href="https://api.whatsapp.com/send?text={{ book.name }} {{ chapter.number }}:{% if verses %}{{ verses.first.number }}-{{ verses.last.number }}{% else %}{{ verse.number }}{% endif %} - {{ request.build_absolute_uri }}" target="_blank" class="text-success me-2">
+                        <i class="bi bi-whatsapp fs-4"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3">
+            <div id="copyToast" class="toast align-items-center text-white bg-dark border-0 rounded-pill" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body text-center w-100">
+                        Texto copiado com sucesso!
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
+<style>
+    .bible-text {
+        font-family: 'Georgia', serif;
+        text-align: justify;
+    }
+    .card {
+        background-color: #ffffff;
+    }
+    sup { font-size: 0.8rem; }
+</style>
+
 <script>
-  function sharePost(title, url) {
+// Função para compartilhar usando a API nativa
+function shareLink(title, url) {
     if (navigator.share) {
         navigator.share({
             title: title,
+            text: 'Veja este trecho da Bíblia: ',
             url: url
         }).catch(console.error);
     } else {
-        // Fallback: Copiar para a área de transferência
-        navigator.clipboard.writeText(url);
-        alert("Link copiado para a área de transferência!");
+        copyToClipboard();
     }
 }
-</script>
 
+// Função para copiar o texto (UX de feedback com Toast)
+function copyToClipboard() {
+    const textToCopy = document.getElementById('share-content').innerText;
+    const url = window.location.href;
+    const fullText = `${textToCopy}\n\nLido em: ${url}`;
+
+    navigator.clipboard.writeText(fullText).then(() => {
+        const toastEl = document.getElementById('copyToast');
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    });
+}
+</script>
 {% endblock %}
