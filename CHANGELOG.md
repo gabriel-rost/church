@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/gabriel-rost/church/compare/v1.9.0...v1.10.0) (2026-04-06)
+
+
+### Features
+
+* enhance manage_permissions function with session invalidation and improved user feedback ([d492f63](https://github.com/gabriel-rost/church/commit/d492f637973850c71810ae4c1a159755c6099314))
+
 # [1.9.0](https://github.com/gabriel-rost/church/compare/v1.8.0...v1.9.0) (2026-04-05)
 
 
