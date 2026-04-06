@@ -10,7 +10,7 @@ def delete_comment(request, comment_id):
     # Verifica se o método é POST e se o usuário tem autoridade
     if request.method == 'POST':
         is_owner = request.user == comment.user
-        has_permission = request.user.has_perm('app_label.can_delete_comment')
+        has_permission = request.user.has_perm('church_app.can_approve_waitlist') # TODO: PERMISSAO DE OCULTAR COMMENT
 
         if is_owner:
             comment.delete()

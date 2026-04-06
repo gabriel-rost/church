@@ -7,7 +7,7 @@ from church_app.models import Post
 def delete_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
 
-    if request.method == 'POST' and request.user == post.user:
+    if request.method == 'POST' and request.user == post.user or request.user.has_perm('church_app.can_approve_waitlist'): # TODO: PERMISSAO DE OCULTAR POST
         channel_pk = post.channel.pk
         post.delete()
         return redirect('infinite_post_list', channel_pk=channel_pk)
