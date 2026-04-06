@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/gabriel-rost/church/compare/v1.10.0...v1.11.0) (2026-04-06)
+
+
+### Features
+
+* update permission checks for deleting comments and posts ([df432f1](https://github.com/gabriel-rost/church/commit/df432f17dced3c7515ce573a58ebb538737ddb9f))
+
 # [1.10.0](https://github.com/gabriel-rost/church/compare/v1.9.0...v1.10.0) (2026-04-06)
 
 
