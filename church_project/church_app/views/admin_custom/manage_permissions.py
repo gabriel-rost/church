@@ -2,13 +2,15 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import Group
 from django.contrib import messages
-from ...models import log_activity
+from django.contrib.sessions.models import Session
+from django.utils import timezone
 from django.contrib.auth import get_user_model
+from ...models import log_activity
+
 User = get_user_model()
 
 @permission_required('church_app.can_approve_waitlist', raise_exception=True)
 def manage_permissions(request):
-    # Buscamos os cargos disponíveis (Moderador, Curador, etc)
     available_groups = Group.objects.all()
     
     if request.method == 'POST':
@@ -16,28 +18,35 @@ def manage_permissions(request):
         group_id = request.POST.get('group_id')
         target_user = get_object_or_404(User, id=user_id)
 
-        if target_user.is_superuser:
-            messages.error(request, "Não é permitido alterar as permissões de um Administrador Geral.")
+        # Proteção contra alteração de Superuser ou de si mesmo
+        if target_user.is_superuser or target_user.id == request.user.id:
+            messages.error(request, "Ação não permitida para este usuário.")
             return redirect('manage_permissions')
         
-        # 1. Limpa cargos anteriores para evitar conflito de permissões
+        # 1. Atualização das permissões no Banco de Dados
         target_user.groups.clear()
         
-        # 2. Atribui o novo cargo se houver um selecionado
         if group_id:
             new_group = get_object_or_404(Group, id=group_id)
             target_user.groups.add(new_group)
             msg = f"Cargo de {target_user.username} alterado para {new_group.name}."
         else:
             msg = f"{target_user.username} agora é um Membro Comum."
+
+        # 2. Invalidação de Sessão
+        # Buscamos todas as sessões ativas e deletamos as que pertencem ao target_user
+        sessions = Session.objects.filter(expire_date__gte=timezone.now())
+        for session in sessions:
+            data = session.get_decoded()
+            if str(target_user.pk) == data.get('_auth_user_id'):
+                session.delete()
             
-        # 3. Registrar a alteração no Log de Auditoria
+        # 3. Auditoria e Feedback
         log_activity(request.user, msg, target=target_user)
-        
         messages.success(request, msg)
         return redirect('manage_permissions')
 
-    # Listamos apenas usuários aprovados para focar na gestão de quem já é da casa
+    # GET: Listagem de membros
     active_members = User.objects.filter(
         is_approved=True
     ).exclude(
