@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/gabriel-rost/church/compare/v1.12.1...v1.13.0) (2026-05-08)
+
+
+### Features
+
+* add service worker event listeners for install, activate, and fetch ([52867f0](https://github.com/gabriel-rost/church/commit/52867f0164a9edbf4a936879ba66ce5dc6452f31))
+
 ## [1.12.1](https://github.com/gabriel-rost/church/compare/v1.12.0...v1.12.1) (2026-05-08)
 
 
