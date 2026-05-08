@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/gabriel-rost/church/compare/v1.12.0...v1.12.1) (2026-05-08)
+
+
+### Bug Fixes
+
+* add missing static template tag in base.html ([a1f0c93](https://github.com/gabriel-rost/church/commit/a1f0c93c79c471c1689b2f0cd3467d0df4870984))
+
 # [1.12.0](https://github.com/gabriel-rost/church/compare/v1.11.0...v1.12.0) (2026-05-08)
 
 
