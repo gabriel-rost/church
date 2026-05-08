@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/gabriel-rost/church/compare/v1.11.0...v1.12.0) (2026-05-08)
+
+
+### Features
+
+* add web app manifest and icons for improved PWA support ([9dbdf7b](https://github.com/gabriel-rost/church/commit/9dbdf7b180c7c9527d122afaf416395ce256f074))
+
 # [1.11.0](https://github.com/gabriel-rost/church/compare/v1.10.0...v1.11.0) (2026-04-06)
 
 
