@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -11,17 +16,30 @@
                 <p class="text-muted">Plano: <strong>{{ plan.title }}</strong></p>
                 <hr>
 
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
                     <div class="row g-3">
-                        <div class="col-6">
-                            <label class="form-label fw-semibold">Semana</label>
-                            {{ form.week_number }}
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Data da Leitura</label><br>
+                            {{ form.scheduled_date }}
                         </div>
-                        <div class="col-6">
-                            <label class="form-label fw-semibold">Dia</label>
-                            {{ form.day_number }}
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Material (opcional)</label>
+                            {{ form.file }}
+
+                            <!-- Preview -->
+                            <div id="file-preview" class="mt-3" style="display:none;">
+                                <p class="text-muted small mb-2">Pré-visualização:</p>
+
+                                <img id="preview-image" class="img-fluid rounded shadow-sm mb-2" style="max-height:200px; display:none;">
+                                
+                                <iframe id="preview-pdf" style="width:100%; height:300px; display:none;" class="rounded border"></iframe>
+
+                                <p id="file-name" class="small text-muted"></p>
+                            </div>
                         </div>
 
                         <div class="col-12">
@@ -33,7 +51,7 @@
                             <label class="form-label fw-semibold">Do Capítulo</label>
                             {{ form.start_chapter }}
                         </div>
-                        <div class="col-6">
+                        <div class="col-6" id="endChapterWrapper">
                             <label class="form-label fw-semibold">Até o Capítulo</label>
                             {{ form.end_chapter }}
                         </div>
@@ -78,4 +96,144 @@
         </div>
     </div>
 </div>
+<script>
+flatpickr("#scheduled_date", {
+    enableTime: false,
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "d/m/Y",
+    clickOpens: true,
+});
+
+new TomSelect("#id_book", {
+    create: false,
+    sortField: {
+        field: "text",
+        direction: "asc"
+    },
+    placeholder: "Selecione um livro..."
+});
+
+document.getElementById('file_input').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+
+    const previewContainer = document.getElementById('file-preview');
+    const previewImage = document.getElementById('preview-image');
+    const previewPDF = document.getElementById('preview-pdf');
+    const fileName = document.getElementById('file-name');
+
+    if (file.size > 5 * 1024 * 1024) {
+        alert("Arquivo muito grande (máx 5MB)");
+        file = 'none';
+        return;
+    }
+
+    if (!file) {
+        previewContainer.style.display = 'none';
+        return;
+    }
+
+    previewContainer.style.display = 'block';
+    fileName.textContent = file.name;
+
+    const fileType = file.type;
+
+    // Reset
+    previewImage.style.display = 'none';
+    previewPDF.style.display = 'none';
+
+    // 🖼 IMAGEM
+    if (fileType.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // // 📄 PDF
+    // else if (fileType === 'application/pdf') {
+    //     const fileURL = URL.createObjectURL(file);
+    //     previewPDF.src = fileURL;
+    //     previewPDF.style.display = 'block';
+    // }
+
+    // 📦 Outros (fallback)
+    else {
+        previewImage.style.display = 'none';
+        previewPDF.style.display = 'none';
+    }
+});
+
+document.getElementById("id_book").addEventListener("change", function () {
+    const bookId = this.value;
+
+    fetch(`/ajax/chapters/?book_id=${bookId}`)
+        .then(response => response.json())
+        .then(data => {
+            const startSelect = document.getElementById("id_start_chapter");
+            const endSelect = document.getElementById("id_end_chapter");
+
+            // limpa opções
+            startSelect.innerHTML = "";
+            endSelect.innerHTML = "";
+
+            data.forEach(chapter => {
+                const option1 = new Option(chapter.number, chapter.id);
+                const option2 = new Option(chapter.number, chapter.id);
+
+                startSelect.add(option1);
+                endSelect.add(option2);
+            });
+        });
+});
+
+document.getElementById("id_start_chapter").addEventListener("change", function () {
+    const chapterId = this.value;
+
+    fetch(`/ajax/verse-count/?chapter_id=${chapterId}`)
+        .then(res => res.json())
+        .then(data => {
+            const max = data.count;
+
+            document.getElementById("id_start_verse").max = max;
+            document.getElementById("id_end_verse").max = max;
+        });
+});
+
+const toggle = document.getElementById('toggleVerses');
+const verseFields = document.getElementById('verseFields');
+const endChapter = document.getElementById('endChapterWrapper');
+
+toggle.addEventListener('change', function () {
+    if (this.checked) {
+        verseFields.style.display = 'flex';
+        endChapter.style.display = 'none';
+    } else {
+        verseFields.style.display = 'none';
+        endChapter.style.display = 'block';
+    }
+});
+
+function syncChapters() {
+    if (toggleVerses.checked) {
+        endChapter.value = startChapter.value;
+    }
+}
+
+toggleVerses.addEventListener("change", function () {
+    if (this.checked) {
+        syncChapters();
+    }
+});
+
+startChapter.addEventListener("change", function () {
+    if (!endChapter.value) {
+        endChapter.value = this.value;
+    }
+});
+
+startChapter.addEventListener("change", syncChapters);
+</script>
 {% endblock %}

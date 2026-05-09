@@ -39,8 +39,13 @@ class PlanTask(models.Model):
         related_name='tasks', 
         on_delete=models.CASCADE
     )
-    week_number = models.PositiveIntegerField()
-    day_number = models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    scheduled_date = models.DateField(null=True, blank=True)
+    file = models.FileField(
+        upload_to="plan_tasks/%Y/%m/",
+        null=True,
+        blank=True
+    )
     
     # ManyToMany permite que um dia tenha vários capítulos (ex: Mateus 1 e 2)
     chapters = models.ManyToManyField(
@@ -54,13 +59,7 @@ class PlanTask(models.Model):
     end_verse = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
-        # Ordena automaticamente por semana e depois por dia
-        ordering = ['week_number', 'day_number']
-        # Garante que não existam dois "Dia 1" na mesma "Semana 1" para o mesmo plano
-        #unique_together = ('plan', 'week_number', 'day_number')
-
-    def __str__(self):
-        return f"{self.plan.title} - S{self.week_number} D{self.day_number}"
+        ordering = ['scheduled_date']
 
     @property
     def chapter_summary(self):

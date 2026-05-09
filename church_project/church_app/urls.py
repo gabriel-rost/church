@@ -60,4 +60,6 @@ urlpatterns = [
     path('api/chapters/<int:book_id>/', views.get_chapters, name='get_chapters'),
     path('api/verses/<int:book_id>/<int:chapter>/', views.get_verses_count, name='get_verses_count'),
     path('posts/user/<str:username>/ajax/', views.user_posts_ajax, name='user_posts_ajax'),
+    path('ajax/chapters/', views.get_chapters, name='get_chapters'),
+    path('ajax/verse-count/', views.get_verse_count, name='get_verse_count'),
 ]

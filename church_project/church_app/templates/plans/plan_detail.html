@@ -83,128 +83,246 @@
     {% endif %}
 
     <div class="accordion accordion-flush shadow-sm rounded-4 overflow-hidden" id="accordionPlan">
-        {% for week, tasks in weeks.items %}
-        <div class="accordion-item border-0">
-            <div class="d-flex align-items-center bg-white border-bottom">
-                <h2 class="accordion-header flex-grow-1" id="heading{{ week }}">
-                    <button
-                        class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-bold py-3 shadow-none"
-                        type="button" data-bs-toggle="collapse" data-bs-target="#week{{ week }}">
-                        <i class="bi bi-calendar-range me-2 text-primary"></i> Semana {{ week }}
-                    </button>
-                </h2>
 
-                {% if perms.church_app.can_create_reading_plan %}
-                <button type="button" class="btn btn-link text-danger me-3 py-0" data-bs-toggle="modal"
-                    data-bs-target="#deleteWeekModal{{ week }}">
-                    <i class="bi bi-trash-fill fs-5"></i>
-                </button>
-                {% endif %}
+    {% for date, tasks in grouped_tasks.items %}
+
+    <div class="accordion-item border-0 mb-2">
+
+        <!-- HEADER -->
+        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+
+            <button class="accordion-button fw-bold py-3 shadow-none d-flex justify-content-between"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse{{ forloop.counter }}">
+
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-calendar-event me-2 text-primary"></i>
+
+                    {% if date %}
+                        {{ date|date:"d/m/Y" }}
+                    {% else %}
+                        Sem data
+                    {% endif %}
+                </div>
+
+                <span class="badge bg-light text-dark ms-3">
+                    {{ tasks|length }} tarefas
+                </span>
+
+            </button>
+
+        </h2>
+
+        <!-- BODY -->
+        <div id="collapse{{ forloop.counter }}"
+            class="accordion-collapse collapse show"
+            data-bs-parent="#accordionPlan">
+
+            <div class="accordion-body p-0">
+
+                <div class="list-group list-group-flush">
+
+                    {% for task in tasks %}
+
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3 px-3
+                        {% if task.id in user_completed_ids %}bg-light-subtle{% endif %}">
+
+                        <!-- LEFT SIDE -->
+                        <div class="d-flex align-items-start">
+
+                            <!-- STATUS ICON -->
+                            <div class="me-3">
+                                {% if task.id in user_completed_ids %}
+                                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                                {% else %}
+                                    <i class="bi bi-circle text-muted fs-4"></i>
+                                {% endif %}
+                            </div>
+
+                            <!-- INFO -->
+                            <div>
+
+                                <div class="fw-bold">
+                                    {{ task.chapter_summary }}
+                                </div>
+
+                                <small class="text-muted">
+                                    {{ task.scheduled_date|date:"d/m/Y" }}
+                                </small>
+
+                                <div class="mt-1">
+
+                                    {% if task.scheduled_date|date:"Y-m-d" == today|date:"Y-m-d" %}
+                                        <span class="badge bg-primary">Hoje</span>
+                                    {% endif %}
+
+                                    {% if task.scheduled_date < now and task.id not in user_completed_ids %}
+                                        <span class="badge bg-danger">Atrasado</span>
+                                    {% endif %}
+
+
+                                    {% if task.file %}
+
+    {% with file_url=task.file.url %}
+
+        <!-- 📄 PDF -->
+        {% if file_url|lower|slice:"-4:" == ".pdf" %}
+
+            <div class="mt-2">
+                <a href="{{ file_url }}" target="_blank" class="btn btn-sm btn-outline-danger rounded-pill">
+                    📄 Abrir PDF
+                </a>
             </div>
 
-            <div id="week{{ week }}" class="accordion-collapse collapse {% if week == next_week %}show{% endif %}"
-                data-bs-parent="#accordionPlan">
-                <div class="accordion-body p-0">
-                    <div class="list-group list-group-flush">
-                        {% for task in tasks %}
-                        <div
-                            class="list-group-item d-flex align-items-center justify-content-between py-3 border-start border-4 {% if task.id in user_completed_ids %}border-success{% else %}border-light{% endif %}">
-                            <div class="d-flex align-items-center">
-                                <div class="me-3 ps-2">
-                                    {% if task.id in user_completed_ids %}
-                                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
-                                    {% else %}
-                                    <i class="bi bi-circle text-muted fs-4"></i>
-                                    {% endif %}
+        <!-- 🖼️ IMAGEM -->
+        {% elif file_url|lower|slice:"-4:" == ".png" or file_url|lower|slice:"-4:" == ".jpg" or file_url|lower|slice:"-5:" == ".jpeg" or file_url|lower|slice:"-4:" == ".webp" %}
+
+            <div class="mt-2">
+
+                <a href="{{ file_url }}" target="_blank">
+
+                    <img src="{{ file_url }}"
+                         alt="arquivo"
+                         class="img-fluid rounded-3 border"
+                         style="max-height: 180px; object-fit: cover;">
+
+                </a>
+
+            </div>
+
+        <!-- 📎 OUTROS -->
+        {% else %}
+
+            <div class="mt-2">
+                <a href="{{ file_url }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill">
+                    📎 Abrir arquivo
+                </a>
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+{% endif %}
+
                                 </div>
 
-                                <div>
-                                    <h6 class="mb-0 fw-bold">Dia {{ task.day_number }}</h6>
-                                    <small class="text-muted">{{ task.chapter_summary }}</small>
-                                </div>
                             </div>
+                        </div>
 
+                        <!-- RIGHT SIDE -->
+                        <div class="d-flex align-items-center gap-2">
 
                             {% if not plan.draft %}
-                            <div class="pe-2">
                                 {% with first_chapter=task.chapters.first %}
-                                {% if first_chapter %}
 
-                                {% if task.start_verse %}
-                                <a href="{% url 'read_verse_range' first_chapter.book.id first_chapter.number task.start_verse task.end_verse %}"
-                                    class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
-                                    {% if task.id in user_completed_ids %}Revisar
-                                    {% else %}Ler agora{% endif %}
-                                </a>
-                                {% else %}
-                                <a href="{% url 'read_chapter' first_chapter.book.id first_chapter.number %}"
-                                    class="btn {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %} btn-sm rounded-pill px-3 fw-bold">
-                                    {% if task.id in user_completed_ids %}Revisar{% else %}Ler agora{% endif %}
-                                </a>
-                                {% endif %}
+                                    {% if first_chapter %}
 
-                                {% if user.is_authenticated and task.id not in user_completed_ids %}
-                                <form action="{% url 'complete_task' task.id %}" method="post" class="d-inline ms-2">
-                                    {% csrf_token %}
-                                    <button class="btn btn-success btn-sm rounded-pill px-3 fw-bold">
-                                        ✓ Concluir
-                                    </button>
-                                </form>
-                                {% endif %}
+                                        {% if task.start_verse %}
+                                            <a href="{% url 'read_verse_range' first_chapter.book.id first_chapter.number task.start_verse task.end_verse %}"
+                                            class="btn btn-sm rounded-pill {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %}">
+                                                {% if task.id in user_completed_ids %}Revisar{% else %}Ler{% endif %}
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'read_chapter' first_chapter.book.id first_chapter.number %}"
+                                            class="btn btn-sm rounded-pill {% if task.id in user_completed_ids %}btn-outline-secondary{% else %}btn-primary{% endif %}">
+                                                {% if task.id in user_completed_ids %}Revisar{% else %}Ler{% endif %}
+                                            </a>
+                                        {% endif %}
 
-                                {% else %}
-                                <span class="badge bg-warning text-dark">Sem capítulos</span>
-                                {% endif %}
+                                        {% if user.is_authenticated and task.id not in user_completed_ids %}
+                                            <form action="{% url 'complete_task' task.id %}" method="post" class="d-inline">
+                                                {% csrf_token %}
+                                                <button class="btn btn-success btn-sm rounded-pill">
+                                                    ✓
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Sem capítulos</span>
+                                    {% endif %}
+
                                 {% endwith %}
-                            </div>
                             {% endif %}
 
-
+                            <!-- DELETE TASK -->
                             {% if perms.church_app.can_create_reading_plan %}
-                            <form action="{% url 'delete_task' task.id %}" method="post" class="d-inline ms-2">
+                            <form action="{% url 'delete_task' task.id %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-link text-danger p-0" title="Apagar esta leitura">
-                                    <i class="bi bi-x-circle"></i>
+                                <button class="btn btn-link text-danger p-0">
+                                    <i class="bi bi-x-circle fs-5"></i>
                                 </button>
                             </form>
                             {% endif %}
 
                         </div>
-                        {% endfor %}
+
                     </div>
+
+                    {% endfor %}
+
                 </div>
             </div>
         </div>
 
-        {% if perms.church_app.can_create_reading_plan %}
-        <div class="modal fade" id="deleteWeekModal{{ week }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content" style="border-radius: 20px;">
-                    <div class="modal-body p-4 text-center">
-                        <i class="bi bi-exclamation-octagon text-danger fs-1 mb-3"></i>
-                        <h5 class="fw-bold mb-2">Apagar Semana {{ week }}?</h5>
-                        <p class="text-muted small">Isso removerá todas as leituras lançadas para esta semana. Esta ação
-                            não pode ser desfeita.</p>
-                        <form action="{% url 'delete_week' plan.id week %}" method="post">
-                            {% csrf_token %}
-                            <div class="d-grid gap-2 mt-4">
-                                <button type="submit" class="btn btn-danger rounded-pill fw-bold">Confirmar</button>
-                                <button type="button" class="btn btn-light rounded-pill text-muted"
-                                    data-bs-dismiss="modal">Cancelar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
+    </div>
 
-        {% empty %}
-        <div class="p-5 text-center">
-            <i class="bi bi-journal-x fs-1 text-muted opacity-25"></i>
-            <p class="text-muted mt-3">Nenhuma leitura lançada para este plano ainda.</p>
+    {% if perms.church_app.can_create_reading_plan %}
+
+    <!-- DELETE WEEK MODAL -->
+    <div class="modal fade" id="deleteWeekModal{{ forloop.counter }}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+
+            <div class="modal-content rounded-4">
+
+                <div class="modal-body text-center p-4">
+
+                    <i class="bi bi-exclamation-octagon text-danger fs-1 mb-3"></i>
+
+                    <h5 class="fw-bold">Apagar este grupo?</h5>
+
+                    <p class="text-muted small">
+                        Isso removerá todas as leituras deste período.
+                    </p>
+
+                    <form action="#" method="post">
+                        {% csrf_token %}
+
+                        <button class="btn btn-danger rounded-pill w-100 mb-2">
+                            Confirmar
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-light w-100 rounded-pill"
+                                data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
         </div>
-        {% endfor %}
+    </div>
+
+    {% endif %}
+
+    {% endfor %}
+
+    <!-- EMPTY STATE -->
+    {% if not grouped_tasks %}
+
+    <div class="p-5 text-center">
+        <i class="bi bi-journal-x fs-1 text-muted opacity-25"></i>
+        <p class="text-muted mt-3">Nenhuma leitura lançada para este plano ainda.</p>
+    </div>
+
+    {% endif %}
+
     </div>
 </div>
 <style>

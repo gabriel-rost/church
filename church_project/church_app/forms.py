@@ -129,9 +129,32 @@ from .models import PlanTask
 
 class PlanTaskForm(forms.ModelForm):
     # Campos extras para definir o intervalo de capítulos
-    book = forms.ModelChoiceField(queryset=Book.objects.all(), label="Livro", widget=forms.Select(attrs={'class': 'form-select'}))
-    start_chapter = forms.IntegerField(label="Capítulo Inicial", widget=forms.NumberInput(attrs={'class': 'form-select'}))
-    end_chapter = forms.IntegerField(label="Capítulo Final", widget=forms.NumberInput(attrs={'class': 'form-select'}))
+    book = forms.ModelChoiceField(
+        queryset=Book.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-select'
+        })
+    )
+    start_chapter = forms.IntegerField(
+        label="Capítulo Inicial",
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+
+    end_chapter = forms.IntegerField(
+        label="Capítulo Final",
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+
+    file = forms.FileField(
+        required=False,
+        widget=forms.ClearableFileInput(
+            attrs={
+                'class': 'form-control',
+                'id': 'file_input'
+            }
+        )
+    )
 
     start_verse = forms.IntegerField(
         label="Versículo Inicial",
@@ -147,10 +170,26 @@ class PlanTaskForm(forms.ModelForm):
 
     class Meta:
         model = PlanTask
-        fields = ['week_number', 'day_number']
+        fields = [
+            'scheduled_date',
+            'file',
+            'book',
+            'start_chapter',
+            'end_chapter',
+            'start_verse',
+            'end_verse',
+        ]
+        labels = {
+            'scheduled_date': 'Data da Leitura',
+            'file': 'Material (opcional)',
+        }
         widgets = {
-            'week_number': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 1'}),
-            'day_number': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 1'}),
+            'scheduled_date': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'id': 'scheduled_date'
+                }
+            ),
         }
     
     def clean(self):
@@ -161,26 +200,40 @@ class PlanTaskForm(forms.ModelForm):
         sv = cleaned.get('start_verse')
         ev = cleaned.get('end_verse')
 
-        # Versículos só podem existir em um único capítulo
-        if sv or ev:
-            if ec and ec != sc:
-                raise forms.ValidationError(
-                    "Versículos só podem ser definidos para um único capítulo."
-                )
+        # Capítulo inicial é obrigatório
+        if not sc:
+            raise forms.ValidationError("Selecione o capítulo inicial.")
 
+        # Se não informou capítulo final → assume igual ao inicial
+        if not ec:
+            ec = sc
+            cleaned['end_chapter'] = sc
+
+        # 🟣 Validação de versículos
+        if sv or ev:
+
+            # ambos obrigatórios
             if not sv or not ev:
                 raise forms.ValidationError(
                     "Informe o versículo inicial e final."
                 )
 
+            # força capítulo único
+            if ec != sc:
+                cleaned['end_chapter'] = sc
+
+            # ordem dos versículos
             if sv > ev:
                 raise forms.ValidationError(
                     "Versículo inicial não pode ser maior que o final."
                 )
 
-        # Se não informou capítulo final
-        if not ec:
-            cleaned['end_chapter'] = sc
+        # Validação de intervalo de capítulos
+        else:
+            if sc > ec:
+                raise forms.ValidationError(
+                    "Capítulo inicial não pode ser maior que o final."
+                )
 
         return cleaned
 
