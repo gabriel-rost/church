@@ -16,7 +16,7 @@ django-webpush==0.3.6
 frozenlist==1.8.0
 gunicorn==23.0.0
 http-ece==1.2.1
-idna==3.11
+idna==3.15
 jmespath==1.0.1
 Markdown==3.10
 multidict==6.7.0
